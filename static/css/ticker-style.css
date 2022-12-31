@@ -1,0 +1,191 @@
+html, body {
+  background-color: transparent;
+}
+
+.ticker {
+  display: flex;
+  flex-direction: column;
+  font-size: 12.6vw;
+  font-family: Agency FB;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-align: center;
+  width: 100vw;
+}
+
+.banner {
+  display: flex;
+  flex-direction: row;
+  height: 15vw;
+}
+
+.team-colour {
+  width: 5vw;
+}
+
+.homeColour {
+  background-color: black;
+}
+
+.team-name {
+  display: inline-flex;
+  justify-content: center;
+  color: white;
+  background-color: #0D0D0D;
+  align-items: center;
+}
+
+.normal-name-width {
+  width: 30vw;
+}
+
+.penalty-name-width {
+  width: 30vw;
+}
+
+/* .text-padding {
+  margin-top: 0.0708em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+#score {
+  width: 30vw;
+  color: white;
+  background-color: #106B36;
+  height: 15vw;
+  font-size: 10.4vw;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#awayColour {
+  background-color: black;
+}
+
+#timer {
+  width: 30vw;
+  background-color: white;
+  color: black;
+  margin: 0 auto;
+  height: 15vw;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10.4vw;
+}
+
+
+/* Penalties */
+
+.penalties {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 40%;
+  background-color: #006600BB;
+}
+
+.penalty {
+  height: 7vh;
+  width: 7vh;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.untaken {
+  background-color: #bbb;
+}
+
+.scored {
+  background-color: #00cc00;
+}
+
+.missed {
+  background-color: red;
+}
+
+.display-none {
+  display: none !important;
+}
+
+#court-hidden {
+  display: none;
+}
+
+.border-bottom {
+  border-bottom: black 1px solid;
+}
+
+.border-top {
+  border-top: black 1px solid;
+}
+
+.number-penalties {
+  width: 10%;
+  background-color: #006600;
+  color: white;
+}
+
+#cross {
+  width: 100px;
+  height: 100px;
+  position: relative;
+ transform:rotate(45deg);
+-ms-transform:rotate(45deg); /* IE 9 */
+-webkit-transform:rotate(45deg); /* Safari and Chrome */
+}
+
+#cross:before, #cross:after {
+ content: "";
+ position: absolute;
+ z-index: -1;
+ background: #d00;
+}
+
+#cross:before {
+ left: 50%;
+ width: 30%;
+ margin-left: -15%;
+ height: 100%;
+}
+
+#cross:after {
+ top: 50%;
+ height: 30%;
+ margin-top: -15%;
+ width: 100%;
+}
+
+#tick-mark {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
+#tick-mark::before {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 50%;
+  width: 3px;
+  background-color: #336699;
+  content: "";
+  transform: translateX(10px) rotate(-45deg);
+  transform-origin: left bottom;
+}
+
+#tick-mark::after {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background-color: #336699;
+  content: "";
+  transform: translateX(10px) rotate(-45deg);
+  transform-origin: left bottom;
+}

@@ -1,0 +1,72 @@
+<html>
+<head>
+  <link rel="stylesheet" href="/static/css/ticker-style.css">
+  <script src="//code.jquery.com/jquery-3.3.1.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+  <script src="/static/js/ticker-script.js"></script>
+  <style>
+    #homeColour {
+        background-color: {{ homeColour }};
+    }
+
+    #awayColour {
+        background-color: {{ awayColour }};
+    }
+  </style>
+</head>
+<body>
+  <div id="normalTicker" class="ticker"> 
+    <div class="banner">
+      <div class="homeColour team-colour"></div>
+      <div class="team-name normal-name-width">
+        <span class="homeTeam text-padding">{{ homeAbbrev }}</span>
+      </div>
+      <div id="score"><div id="homeGoals" class="text-padding">{{ homeGoals }}</div><div>&nbsp;&nbsp;·&nbsp;&nbsp;</div><div id="awayGoals" class="text-padding">{{ awayGoals }}</div></div>
+      <div class="team-name normal-name-width">
+        <span class="awayTeam text-padding">{{ awayAbbrev }}</span>
+      </div>
+      <div class="awayColour team-colour"></div>
+    </div>
+    <div id="timer" class="display-none">
+      <span id="time" class="text-padding">18:00</span>
+    </div>
+  </div>
+  <div id="penaltyTicker" class="ticker display-none">
+    <div id="homeBanner" class="banner">
+      <div class="homeColour team-colour border-bottom"></div>
+      <div class="team-name penalty-name-width border-bottom">
+        <span class="homeTeam text-padding">{{ homeAbbrev }}</span>
+      </div>
+      <div class="number-penalties border-bottom">
+        <span id="homeNumberPenalties" class="text-padding">0</span>
+      </div>
+      <div class="penalties border-bottom">
+        <span id="homePenalty1" class="penalty untaken"></span>
+        <span id="homePenalty2" class="penalty untaken"></span>
+        <span id="homePenalty3" class="penalty untaken"></span>
+        <span id="homePenalty4" class="penalty untaken"></span>
+        <span id="homePenalty5" class="penalty untaken"></span>
+        <span id="homePenalty6" class="penalty untaken sudden-death display-none"></span>
+      </div>
+    </div>
+    <div id="awayBanner" class="banner">
+      <div class="awayColour team-colour border-top"></div>
+      <div class="team-name penalty-name-width border-top">
+        <span class="awayTeam text-padding">{{ awayAbbrev }}</span>
+      </div>
+      <div id="awayNumberPenalties" class="number-penalties border-top">
+        <span id="awayNumberPenalties" class="text-padding">0</span>
+      </div>
+      <div class="penalties border-top">
+        <span id="awayPenalty1" class="penalty untaken"></span>
+        <span id="awayPenalty2" class="penalty untaken"></span>
+        <span id="awayPenalty3" class="penalty untaken"></span>
+        <span id="awayPenalty4" class="penalty untaken"></span>
+        <span id="awayPenalty5" class="penalty untaken"></span>
+        <span id="awayPenalty6" class="penalty untaken sudden-death display-none"></span>
+      </div>
+    </div>
+  </div>
+  <div id="court-hidden">{{ court }}</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/css/controller_style.css">
+        <script src="//code.jquery.com/jquery-3.3.1.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+        <script src="/static/js/controller-script.js"></script>
+    </head>
+    <body class="mainContainer full-width">
+        <div class="top full-width">
+            Court <span id="court">{{ court }}</span> Remote
+        </div>
+        <div class="restOf">
+            <div id="gameControl" class="full-width">
+                <div id="bringForwardRow" class="flex-row full-width time-change-row">
+                    <div id="bringForward" class="button half-width">Advance</div>
+                    <div id="bring-forward-entry" class="time-entry half-width">
+                        <input id="forwardTime" type="number" max=120 class="time-input input-box">
+                        <select id="forwardUnit" class="unit-input input-box">
+                            <option>s</option>
+                            <option>m</option>
+                            <option>h</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="delayRow" class="flex-row full-width time-change-row">
+                    <div id="delay" class="button half-width">Delay</div>
+                    <div id="delay-entry" class="time-entry half-width">
+                        <input id="delay-time" type="number" max=120 class="time-input input-box">
+                        <select id="delay-unit" class="unit-input input-box">
+                            <option>s</option>
+                            <option>m</option>
+                            <option>h</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-row">
+                    <div id="startPeriod" class="button half-width">Start Period</div>
+                    <div id="nextGame" class="button half-width">Next Game</div>
+                </div>
+                <div class="flex-row">
+                    <div id="siren" class="button full-width">Siren Press</div>
+                </div>
+                <div id="pauseRow" class="flex-row full-width">
+                    <div id="pausePlay" class="button full-width pause-colour">Pause</div>
+                </div>
+            </div>
+            <div class="scoreControl full-width">
+                <div class="teamNameLayout full-width">
+                    <div class="teamName homeText">
+                        Home
+                    </div>
+                    <div class="teamName awayText">
+                        Away
+                    </div>
+                </div>
+                <div class="plusRow full-width">
+                    <div id="homeGoalPlus" class="plusButton button half-width">Goal +</div>
+                    <div id="awayGoalPlus" class="plusButton button half-width">Goal +</div>
+                </div>
+                <div class="plusRow full-width">
+                    <div id="homeFoulPlus" class="plusButton button half-width">Foul +</div>
+                    <div id="awayFoulPlus" class="plusButton button half-width">Foul +</div>
+                </div>
+                <div class="takeRow full-width">
+                    <div id="homeGoalTake" class="takeButton button">G-</div>
+                    <div id="homeFoulTake" class="takeButton button">F-</div>
+                    <div id="awayGoalTake" class="takeButton button">G-</div>
+                    <div id="awayFoulTake" class="takeButton button">F-</div>
+                </div>
+            </div>
+            <div class="footer full-width">
+                <div id="simpleBtn" class="footer-item half-width">Goals & Fouls</div><div id="fullBtn" class="footer-item half-width selected">Full Controls</div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,8 @@
+flask
+flask-socketio
+eventlet
+gevent
+mysql-connector-python
+imap-tools
+selenium
+webdrivermanager

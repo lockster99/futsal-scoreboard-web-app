@@ -1,0 +1,2 @@
+-Accidental pause before press "start period"
+-Timer at end of count down period

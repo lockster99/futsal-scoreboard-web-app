@@ -1,0 +1,264 @@
+html,body {
+    background-color: #004400;
+    font-family: Tahoma, sans-serif;
+    color: white;
+    font-size: 11vh;
+    text-align: center;
+}
+
+.square {
+    height: 4vh;
+    width: 30vh;
+    display: inline-block;
+    border-radius: 5%;
+}
+
+#court {
+    font-size: 21vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.team-colour {
+    margin: auto;
+}
+
+#top-container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+    height: 38%;
+    margin: 0;
+}
+
+.team-name {
+    font-size: 12vh;
+    letter-spacing: -4px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    margin: auto;
+}
+
+.logo {
+    height: 35vh;
+}
+
+#homeGoals {
+    text-align: center;
+}
+
+#awayGoals {
+    text-align: center;
+}
+
+.middle-container {
+    display: grid;
+    height: 44%;
+    margin: 0;
+}
+
+#goalsContainer {
+    grid-template-columns: 50% 50%;
+}
+
+#penaltiesContainer {
+    grid-template-columns: 25% 60% 15%;
+}
+
+#period-timer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+}
+
+.bottom-container {
+    display: grid;
+    grid-template-columns: 40% 20% 40%;
+    height: 18%;
+    margin: 0;
+}
+
+#foulsContainer {
+    grid-template-columns: 40% 20% 40%;
+}
+
+#FTScoreContainer {
+    grid-template-columns: 35% 30% 35%;
+}
+
+#title {
+    display: flex;
+    justify-content: center;
+}
+
+.text-div {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.goals-text {
+    font-size: 28vh;
+}
+
+#timer {
+    font-size: 21vh;
+}
+
+#period {
+    font-size: 11vh;
+}
+
+#fouls-header {
+    display: flex;
+    flex-direction: column;
+}
+
+.fouls-section {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    font-size: 15vh;
+}
+
+.ft-score-pens {
+    font-size: 15vh;
+}
+
+#ft-score-header {
+    font-size: 10vh;
+    margin: auto;
+}
+
+.fouls-row {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.dot {
+    height: 10vh;
+    width: 10vh;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.unshaded-dot {
+    background-color: #bbb;
+}
+
+.shaded-dot {
+    background-color: red;
+}
+
+.penalties {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.home-pens {
+    margin-left: 5%;
+}
+
+.penalty {
+    height: 12vh;
+    width: 12vh;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.untaken {
+    background-color: #bbb;
+}
+
+.scored {
+    background-color: #00ff00;
+}
+
+.missed {
+    background-color: red;
+}
+
+.number-penalties {
+    margin: auto;
+    font-size: 15vh;
+}
+
+.display-none {
+    display: none !important;
+}
+
+.invisible {
+    visibility: hidden !important;
+}
+
+#cross {
+    width: 100px;
+    height: 100px;
+    position: relative;
+   transform:rotate(45deg);
+ -ms-transform:rotate(45deg); /* IE 9 */
+ -webkit-transform:rotate(45deg); /* Safari and Chrome */
+ }
+ 
+ #cross:before, #cross:after {
+   content: "";
+   position: absolute;
+   z-index: -1;
+   background: #d00;
+ }
+ 
+ #cross:before {
+   left: 50%;
+   width: 30%;
+   margin-left: -15%;
+   height: 100%;
+ }
+ 
+ #cross:after {
+   top: 50%;
+   height: 30%;
+   margin-top: -15%;
+   width: 100%;
+ }
+
+ #tick-mark {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+}
+
+#tick-mark::before {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 50%;
+    width: 3px;
+    background-color: #336699;
+    content: "";
+    transform: translateX(10px) rotate(-45deg);
+    transform-origin: left bottom;
+}
+
+#tick-mark::after {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background-color: #336699;
+    content: "";
+    transform: translateX(10px) rotate(-45deg);
+    transform-origin: left bottom;
+}

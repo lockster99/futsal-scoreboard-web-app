@@ -1,0 +1,86 @@
+<html> 
+    <head>
+        <link rel="stylesheet" href="/static/css/scoreboard-style.css">
+        <link rel="shortcut icon" href="/static/favicon.ico">
+        <script src="//code.jquery.com/jquery-3.3.1.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js"></script>
+        {{ script }}
+    </head>
+    <body>
+        <div id="top-container">
+            <div id="homeLogo">
+                {{ homeLogo }}
+            </div>
+            <div id="period-timer" class="text-div top-align">
+                <div id="period">{{ period }}</div>
+                <div id="timer">TIMER</div>
+            </div>
+            <div>
+                {{ awayLogo }}
+            </div>
+            <div id="court" style="display:none;">{{ court }}</div>
+        </div>
+        <div id="goalsContainer" class="middle-container">
+            <div id="homeName" class="team-name bottom-align">
+                {{ homeName }}
+            </div>
+            <div id="awayName" class="team-name bottom-align">
+                {{ awayName }}
+            </div>
+            <div class="text-div team-goals top-align">
+                <div id="homeGoals" class="goals-text">{{ homeGoals }}</div>
+            </div>
+            <div class="text-div team-goals top-align">
+                <div id="awayGoals" class="goals-text">{{ awayGoals }}</div>
+            </div>
+        </div>
+        <div id="penaltiesContainer" class="middle-container display-none">
+            <div id="homeNamePenalties" class="team-name bottom-align">
+                {{ homeName }}
+            </div>
+            <div id="homePenalties" class="penalties">
+                <span id="homePenalty1" class="penalty untaken"></span>
+                <span id="homePenalty2" class="penalty untaken"></span>
+                <span id="homePenalty3" class="penalty untaken"></span>
+                <span id="homePenalty4" class="penalty untaken"></span>
+                <span id="homePenalty5" class="penalty untaken"></span>
+                <span id="homePenalty6" class="penalty untaken sudden-death display-none"></span>
+            </div>
+            <div id="homeNumberPenalties" class="number-penalties">0</div>
+            <div id="awayNamePenalties" class="team-name bottom-align">
+                {{ awayName }}
+            </div>
+            <div id="awayPenalties" class="penalties">
+                <span id="awayPenalty1" class="penalty untaken"></span>
+                <span id="awayPenalty2" class="penalty untaken"></span>
+                <span id="awayPenalty3" class="penalty untaken"></span>
+                <span id="awayPenalty4" class="penalty untaken"></span>
+                <span id="awayPenalty5" class="penalty untaken"></span>
+                <span id="awayPenalty6" class="penalty untaken sudden-death display-none"></span>
+            </div>
+            <div id="awayNumberPenalties" class="number-penalties">0</div>
+        </div>
+        <div id="foulsContainer" class="bottom-container">
+            <div id="homeFouls" class="fouls-section">
+                {{ homeFouls }}
+            </div>
+            <div id="fouls-header" class="fouls-section">
+                Fouls
+            </div>
+            <div id="awayFouls" class="fouls-section">
+                {{ awayFouls }}
+            </div>
+        </div>
+        <div id="FTScoreContainer" class="bottom-container display-none">
+            <div id="homeFTScore" class="ft-score-pens">
+                0
+            </div>
+            <div id="ft-score-header" class="ft-score-pens">
+                FT Score
+            </div>
+            <div id="awayFTScore" class="ft-score-pens">
+                0
+            </div>
+        </div>
+    </body>
+</html>
