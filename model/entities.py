@@ -1,22 +1,7 @@
 from datetime import datetime, date, timedelta
 
-#periods = [("Pre game", None), ("First half", 1080), ("Half time", 120), ("Second half", 1080), ("Normal full time", 120),
-#                    ("First half ET", 300), ("Half time ET", 120), ("Second half ET", 300), ("Penalties", None), ("Full time", 20)]
-
 second = 1000
 minute = 60*second
-#periods = [("Pre game", None), ("First half", 18*minute), ("Half time", 2*minute), ("Second half", 18*minute), ("Full time", 30*second)]
-#periods = [("Pre game", None), ("First half", 2*minute), ("Half time", 20*second), ("Second half", 2*minute), ("Full time", 10*second)]
-fleague_periods = [("Pre game", None), ("First half", 20*minute), ("Half time", 8*minute), ("Second half", 20*minute), ("Full time", 4*minute)]
-#periods = fleague_periods
-periods = [("Pre game", None), ("Half game", 18*minute), ("Full time", 30*second)]
-finals_periods = [("Pre game", None), ("First half", 18*minute) ,("Half time", 2*minute), ("Second half", 18*minute), ("Late updates", 30*second), ("Normal FT", 90*second), ("First half ET", 5*minute), ("Half time ET", 1*minute), ("Second half ET", 5*minute), ("Full time ET", 30*second), ("Penalties", 2*second), ("Full time", 10*second)]
-#finals_periods = [("Pre game", None), ("First half", 30*second), ("Half time", 10*second), ("Second half", 30*second), ("Late updates", 15*second), ("Normal FT", 8*second), ("First half ET", 20*second), ("Half time ET", 8*second), ("Second half ET", 20*second), ("Full time ET", 10*second), ("Penalties", 2*second), ("Full time", 20*second)]
-h1_length = periods[1][1]
-# ht_length = h1_length + periods[2][1]
-# h2_length = ht_length + periods[3][1]
-#ft_length = h2_length + periods[4][1]
-ft_length = h1_length + periods[-1][1]
 
 units_divide = {'mus': 1/1000, 'ms': 1, 's': 1000, 'm': 60000, 'h': 360000, 'd': 360000*24}
 
@@ -458,6 +443,8 @@ class Fixture(object):
         }
     
     def move_game_time(self, delta):
+        print(type(self._datetime), self._datetime)
+        print(type(delta), delta)
         self._datetime += timedelta(milliseconds=delta)
 
 
@@ -470,6 +457,7 @@ class FixtureQueue(object):
         self._current = 0
         self._ticker_connected = False
         self._copy_connected = False
+        self._alonetimer_connected = False
 
     def get_fixtures(self):
         return self._fixtures
@@ -507,9 +495,15 @@ class FixtureQueue(object):
 
     def copy_connected(self):
         return self._copy_connected
+    
+    def alonetimer_connected(self):
+        return self._alonetimer_connected
 
     def set_ticker_connected(self, connected: bool):
         self._ticker_connected = connected
 
     def set_copy_connected(self, connected: bool):
         self._copy_connected = connected
+
+    def set_alonetimer_connected(self, connected: bool):
+        self._alonetimer_connected = connected

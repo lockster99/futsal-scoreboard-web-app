@@ -26,6 +26,7 @@ $(document).ready(function(){
     var prevTime = -1;
     var tickerConnected = false;
     var copyConnected = false;
+    var aloneTimerConnected = false;
     var time;
     var finished = false;
 
@@ -302,6 +303,10 @@ $(document).ready(function(){
         copyConnected = true;
     });
 
+    socket.on('alonetimerconnected', ()=> {
+        aloneTimerConnected = true;
+    });
+
     socket.on('siren', ()=> {
         siren.play();
     });
@@ -343,6 +348,9 @@ $(document).ready(function(){
             }
             if (copyConnected) {
                 socket.emit('copytimer', timerString);
+            }
+            if (currentPeriod.showTimeTicker && aloneTimerConnected) {
+                socket.emit('alonetimer', timerString);
             }
         }
     }

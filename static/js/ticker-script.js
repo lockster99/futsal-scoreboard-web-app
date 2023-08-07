@@ -124,6 +124,11 @@ $(document).ready(function(){
         timer.classList.remove("display-none");
     })
 
+    socket.on('hidetimer', () => {
+        var timer = document.getElementById("timer")
+        timer.classList.add("display-none");
+    })
+
     socket.on('nextfixture', function() {
         newFixture();
     });
@@ -156,6 +161,6 @@ $(document).ready(function(){
         setTeamColour('away', currentFixture.awayColour);
         $("#homeGoals").text(currentFixture.homeGoals);
         $("#awayGoals").text(currentFixture.awayGoals);
-        $("#time").text("18:00");
+        $("#time").text("20:00");
     }
 });

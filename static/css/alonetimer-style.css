@@ -1,0 +1,21 @@
+html, body {
+  background-color: transparent;
+  display: flex;
+  font-family: "b Berpatroli Selamanya 402";
+  font-size: 50vh;
+  font-weight: 500;
+  color: #00001E;
+  text-transform: uppercase;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+#timer {
+  display: flex;
+}
+
+.display-none {
+  display: none !important;
+}

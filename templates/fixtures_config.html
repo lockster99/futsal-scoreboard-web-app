@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Futsal Fixtures</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            }
+
+            h1 {
+            text-align: center;
+            color: #0066c0;
+            }
+
+            .fixture {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #0066c0;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 8px 0 rgba(0, 102, 192, 0.2);
+            background-color: white;
+            }
+
+            .fixture > div {
+            margin: 5px 0;
+            }
+
+            .fixture > div > div {
+            color: #0066c0;
+            }
+    </style>
+    <script>
+      const fixtures = document.querySelectorAll(".fixture");
+
+      let isDragging = false;
+      let currentElement;
+      let currentElementIndex;
+      let currentMousePosition;
+      let initialMousePosition;
+      let initialElementPosition;
+
+      const mouseDownHandler = (event) => {
+        currentElement = event.target.closest(".fixture");
+        currentElementIndex = Array.from(fixtures).indexOf(currentElement);
+        initialMousePosition = { x: event.clientX, y: event.clientY };
+        initialElementPosition = currentElement.getBoundingClientRect();
+        isDragging = true;
+      };
+
+      const mouseMoveHandler = (event) => {
+        if (!isDragging) {
+          return;
+        }
+
+        event.preventDefault();
+        currentMousePosition = { x: event.clientX, y: event.clientY };
+
+        const dx = currentMousePosition.x - initialMousePosition.x;
+        const dy = currentMousePosition.y - initialMousePosition.y;
+        const newElementPosition = {
+          left: initialElementPosition.left + dx,
+          top: initialElementPosition.top + dy,
+        };
+
+        currentElement.style.left = `${newElementPosition.left}px`;
+        currentElement.style.top = `${newElementPosition.top}px`;
+        currentElement.style.position = "absolute";
+
+        const currentElementBounds = currentElement.getBoundingClientRect();
+
+        fixtures.forEach((fixture, index) => {
+          if (index === currentElementIndex) {
+            return;
+          }
+
+          const fixtureBounds = fixture.getBoundingClientRect();
+
+          if (
+            currentElementBounds.top < fixtureBounds.bottom &&
+            currentElementBounds.right > fixtureBounds.left &&
+            currentElementBounds.bottom > fixtureBounds.top &&
+            currentElementBounds.left < fixtureBounds.right
+          ) {
+            const fixturesArray = Array.from(fixtures);
+            fixturesArray.splice(currentElementIndex, 1);
+            fixturesArray.splice(index, 0, currentElement);
+            fixturesArray.forEach((fixture) => {
+              fixture.parentNode.appendChild(fixture);
+            });
+          }
+        });
+      };
+
+      const mouseUpHandler = (event) => {
+        if (!isDragging) {
+          return;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Futsal Fixtures</h1>
+    <div class="fixture">
+      <div class="row">
+        <div>League A</div>
+      </div>
+      <div class="row">
+        <div>Round 1, January 1, 2021, 7:00 PM</div>
+      </div>
+      <div class="row">
+        <div>Team A vs. Team B</div>
+      </div>
+      <div class="row">
+        <div>Futsal Arena</div>
+      </div>
+    </div>
+    <div class="fixture">
+      <div class="row">
+        <div>League B</div>
+      </div>
+      <div class="row">
+        <div>Round 1, January 2, 2021, 8:00 PM</div>
+      </div>
+      <div class="row">
+        <div>Team C vs. Team D</div>
+      </div>
+      <div class="row">
+        <div>Futsal Arena</div>
+      </div>
+    </div>
+    <div class="fixture">
+      <div class="row">
+        <div>League C</div>
+      </div>
+      <div class="row">
+        <div>Round 1, January 3, 2021, 9:00 PM</div>
+      </div>
+      <div class="row">
+        <div>Team E vs. Team F</div>
+      </div>
+      <div class="row">
+        <div>Futsal Arena</div>
+      </div>
+    </div>
+  </body>
+</html>
