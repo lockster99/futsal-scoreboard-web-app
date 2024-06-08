@@ -134,6 +134,8 @@ def awayscoreA():
 
 @app.route('/homescoreB')
 def homescoreB():
+    return render_template('homescore.html')
+
 @app.route('/homescoreA')
 def homescoreA():
     return render_template('homescore.html')
@@ -148,6 +150,8 @@ def homescoreB():
 
 @app.route('/awayscoreB')
 def awayscoreB():
+    return render_template('awayscore.html')
+
 @app.route('/awayscoreB')
 def awayscoreB():
     return render_template('awayscore.html')
@@ -385,7 +389,7 @@ def show_time_ticker_B():
     socketio.emit('showtimer', namespace="/alonetimerB")
 
 """
-HANDLE GOALS, FOULS AND PENALTY SHOOTOUTS
+HANDLE GOALS, FOULS AND PENALTY SHOOTOUTS.
 """
 def handle_score_update(fixture_queue: FixtureQueue, cursor, crt, update):
     if 'homeGoals' in update:
