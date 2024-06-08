@@ -16,8 +16,13 @@ def get_current_season(cursor):
     cursor.execute("SELECT id FROM seasons WHERE date('now') BETWEEN start_date AND end_date")
     season = cursor.fetchone()[0]
     return season
+    cursor.execute("SELECT id FROM seasons WHERE date('now') BETWEEN start_date AND end_date")
+    season = cursor.fetchone()[0]
+    return season
 
 def get_competitions(cursor, season: str):
+    cursor.execute(f"""SELECT sc.competition_id, sc.season_id, c.name, c.auto_upload_results, c.show_score, c.show_teams, c.regular_period_configuration, c.finals_period_configuration 
+                        FROM season_competitions as sc 
     cursor.execute(f"""SELECT sc.competition_id, sc.season_id, c.name, c.auto_upload_results, c.show_score, c.show_teams, c.regular_period_configuration, c.finals_period_configuration 
                         FROM season_competitions as sc 
                         INNER JOIN competitions AS c ON sc.competition_id = c.id 
@@ -67,6 +72,18 @@ def get_periods(cursor, configuration_id):
                     bool(row[11]), bool(row[12]), bool(row[13]), bool(row[14]), bool(row[15]), bool(row[16]), 
                     bool(row[17]), bool(row[18]), row[2]) for row in cursor.fetchall()]
 
+def get_period_configuration(cursor, competition_id, round_type):
+    period_config_id = 1
+    if round_type == "Regular":
+        cursor.execute(f"""SELECT regular_period_configuration FROM competitions
+                            WHERE id = {competition_id}""")
+        period_config_id = cursor.fetchone()[0]
+    elif round_type == "Finals":
+        cursor.execute(f"""SELECT finals_period_configuration FROM competitions
+                            WHERE id = {competition_id}""")
+        period_config_id = cursor.fetchone()[0]
+
+    cursor.execute(f"SELECT * FROM period_configurations WHERE id = {period_config_id}")
 def get_period_configuration(cursor, competition_id, round_type):
     period_config_id = 1
     if round_type == "Regular":

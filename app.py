@@ -23,6 +23,9 @@ stop = False
 
 #db = db_connection()
 db = sqlite_connection()
+
+#db = db_connection()
+db = sqlite_connection()
 cursorA = db.cursor()
 cursorB = db.cursor()
 fixture_queue_A = get_today_fixtures_db(cursorA, "Ripley Valley SSC - Court A")
@@ -131,11 +134,32 @@ def awayscoreA():
 
 @app.route('/homescoreB')
 def homescoreB():
+@app.route('/homescoreA')
+def homescoreA():
+    return render_template('homescore.html')
+
+@app.route('/awayscoreA')
+def awayscoreA():
+    return render_template('awayscore.html')
+
+@app.route('/homescoreB')
+def homescoreB():
     return render_template('homescore.html')
 
 @app.route('/awayscoreB')
 def awayscoreB():
+@app.route('/awayscoreB')
+def awayscoreB():
     return render_template('awayscore.html')
+
+@app.route('/alonetimerA')
+def alonetimerA():
+    return render_template('alonetimer.html')
+
+@app.route('/alonetimerB')
+def alonetimerB():
+    return render_template('alonetimer.html')
+
 
 @app.route('/alonetimerA')
 def alonetimerA():
@@ -233,6 +257,34 @@ def handle_connect_alonetimer_B():
     fixture_queue_B.set_alonetimer_connected(True)
     socketio.emit('alonetimerconnected', namespace="/courtB")
 
+@socketio.on('connect', namespace="/homescoreA")
+def handle_connect_homescore_A():
+    print('homescore A connected')
+
+@socketio.on('connect', namespace="/homescoreB")
+def handle_connect_homescore_B():
+    print('homescore B connected')
+
+@socketio.on('connect', namespace="/awayscoreA")
+def handle_connect_homescore_A():
+    print('awayscore A connected')
+
+@socketio.on('connect', namespace="/awayscoreB")
+def handle_connect_homescore_B():
+    print('awayscore B connected')
+
+@socketio.on('connect', namespace="/alonetimerA")
+def handle_connect_alonetimer_A():
+    print('alonetimer A connected')
+    fixture_queue_A.set_alonetimer_connected(True)
+    socketio.emit('alonetimerconnected', namespace="/courtA")
+
+@socketio.on('connect', namespace="/alonetimerB")
+def handle_connect_alonetimer_B():
+    print('alonetimer B connected')
+    fixture_queue_B.set_alonetimer_connected(True)
+    socketio.emit('alonetimerconnected', namespace="/courtB")
+
 @socketio.on('pausestatus', namespace="/courtA")
 def set_remoteA_pause_status(paused):
     socketio.emit('pausestatus', paused, namespace="/remoteA")
@@ -268,10 +320,21 @@ def timer_alone_A(timer):
 def timer_alone_B(timer):
     socketio.emit('alonetimer', timer, namespace="/alonetimerB")
 
+@socketio.on('alonetimer', namespace="/courtA")
+def timer_alone_A(timer):
+    socketio.emit('alonetimer', timer, namespace="/alonetimerA")
+
+@socketio.on('alonetimer', namespace="/courtB")
+def timer_alone_B(timer):
+    socketio.emit('alonetimer', timer, namespace="/alonetimerB")
+
 def new_fixture_slaves(fixture_queue: FixtureQueue, new_fixture, crt):
     fixture_queue.next_fixture()
     socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
     socketio.emit('nextfixture', new_fixture, namespace=f"/court{crt}copy") 
+    socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
+    socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
+    socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
     socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
     socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
     socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
@@ -314,6 +377,7 @@ def play_siren_copy_B():
 def show_time_ticker_A():
     socketio.emit('showtimer', namespace="/courtBticker")
     socketio.emit('showtimer', namespace="/alonetimerA")
+    socketio.emit('showtimer', namespace="/alonetimerA")
 
 @socketio.on('showtimeticker', namespace="/courtB")
 def show_time_ticker_B():
@@ -330,11 +394,13 @@ def handle_score_update(fixture_queue: FixtureQueue, cursor, crt, update):
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}copy")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
+        socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
     else:
         fixture_queue.get_current_fixture().set_away_score(update['awayGoals'])
         dbqueue.put((cursor, f"UPDATE fixtures SET away_score = {update['awayGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}copy")
+        socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
 
 @socketio.on('score', namespace="/courtA")
