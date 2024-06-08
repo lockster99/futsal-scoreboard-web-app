@@ -16,13 +16,8 @@ def get_current_season(cursor):
     cursor.execute("SELECT id FROM seasons WHERE date('now') BETWEEN start_date AND end_date")
     season = cursor.fetchone()[0]
     return season
-    cursor.execute("SELECT id FROM seasons WHERE date('now') BETWEEN start_date AND end_date")
-    season = cursor.fetchone()[0]
-    return season
 
 def get_competitions(cursor, season: str):
-    cursor.execute(f"""SELECT sc.competition_id, sc.season_id, c.name, c.auto_upload_results, c.show_score, c.show_teams, c.regular_period_configuration, c.finals_period_configuration 
-                        FROM season_competitions as sc""")
     cursor.execute(f"""SELECT sc.competition_id, sc.season_id, c.name, c.auto_upload_results, c.show_score, c.show_teams, c.regular_period_configuration, c.finals_period_configuration 
                         FROM season_competitions as sc 
                         INNER JOIN competitions AS c ON sc.competition_id = c.id 

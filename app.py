@@ -136,34 +136,9 @@ def awayscoreA():
 def homescoreB():
     return render_template('homescore.html')
 
-@app.route('/homescoreA')
-def homescoreA():
-    return render_template('homescore.html')
-
-@app.route('/awayscoreA')
-def awayscoreA():
-    return render_template('awayscore.html')
-
-@app.route('/homescoreB')
-def homescoreB():
-    return render_template('homescore.html')
-
 @app.route('/awayscoreB')
 def awayscoreB():
     return render_template('awayscore.html')
-
-@app.route('/awayscoreB')
-def awayscoreB():
-    return render_template('awayscore.html')
-
-@app.route('/alonetimerA')
-def alonetimerA():
-    return render_template('alonetimer.html')
-
-@app.route('/alonetimerB')
-def alonetimerB():
-    return render_template('alonetimer.html')
-
 
 @app.route('/alonetimerA')
 def alonetimerA():
