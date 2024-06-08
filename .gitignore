@@ -155,3 +155,5 @@ cython_debug/
 .vscode/
 model/__pycache__/
 static/img/*
+
+ipswich_futsal_fixtures.sql

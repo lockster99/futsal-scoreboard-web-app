@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, Markup
+from flask import Flask, render_template, request
+from markupsafe import Markup
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from model.fixture_up_down import get_today_fixtures_db
-from send_results_sportstg import send_results_sportstg
-from model.db import db_connection
+from model.db import sqlite_connection
 from model.entities import FixtureQueue
 from threading import Thread
 from queue import Queue
@@ -20,23 +20,15 @@ socketio = SocketIO(app, logger=True, engineio_logger=True, cors_allowed_orgins=
 db_thread = None
 dbqueue = Queue()
 stop = False
-publish_thread = None 
-    
-db = db_connection()
+
+#db = db_connection()
+db = sqlite_connection()
 cursorA = db.cursor()
 cursorB = db.cursor()
 fixture_queue_A = get_today_fixtures_db(cursorA, "Ripley Valley SSC - Court A")
 fixture_queue_B = get_today_fixtures_db(cursorB, "Ripley Valley SSC - Court B")
 courtAfinished = False
 courtBfinished = False
-
-def results_publisher():
-    import time
-    t = 60
-    while t > 0:
-        time.sleep(1)
-        t -= 1
-    send_results_sportstg()
 
 def dbconsumer():
     # Create an infinite loop
@@ -129,13 +121,30 @@ def remoteA():
 def remoteB():
     return render_template('controller.html', court="B")
 
-@app.route('/homescore')
-def homescore():
+@app.route('/homescoreA')
+def homescoreA():
     return render_template('homescore.html')
 
-@app.route('/awayscore')
-def awayscore():
+@app.route('/awayscoreA')
+def awayscoreA():
     return render_template('awayscore.html')
+
+@app.route('/homescoreB')
+def homescoreB():
+    return render_template('homescore.html')
+
+@app.route('/awayscoreB')
+def awayscoreB():
+    return render_template('awayscore.html')
+
+@app.route('/alonetimerA')
+def alonetimerA():
+    return render_template('alonetimer.html')
+
+@app.route('/alonetimerB')
+def alonetimerB():
+    return render_template('alonetimer.html')
+
 
 """
 CONNECTION SOCKET EVENTS
@@ -196,6 +205,34 @@ def handle_connection_remoteB():
     print('remote B connected')
     socketio.emit('getpausestatus', namespace="/courtB")
 
+@socketio.on('connect', namespace="/homescoreA")
+def handle_connect_homescore_A():
+    print('homescore A connected')
+
+@socketio.on('connect', namespace="/homescoreB")
+def handle_connect_homescore_B():
+    print('homescore B connected')
+
+@socketio.on('connect', namespace="/awayscoreA")
+def handle_connect_homescore_A():
+    print('awayscore A connected')
+
+@socketio.on('connect', namespace="/awayscoreB")
+def handle_connect_homescore_B():
+    print('awayscore B connected')
+
+@socketio.on('connect', namespace="/alonetimerA")
+def handle_connect_alonetimer_A():
+    print('alonetimer A connected')
+    fixture_queue_A.set_alonetimer_connected(True)
+    socketio.emit('alonetimerconnected', namespace="/courtA")
+
+@socketio.on('connect', namespace="/alonetimerB")
+def handle_connect_alonetimer_B():
+    print('alonetimer B connected')
+    fixture_queue_B.set_alonetimer_connected(True)
+    socketio.emit('alonetimerconnected', namespace="/courtB")
+
 @socketio.on('pausestatus', namespace="/courtA")
 def set_remoteA_pause_status(paused):
     socketio.emit('pausestatus', paused, namespace="/remoteA")
@@ -223,10 +260,21 @@ def timer_copy_A(timer):
 def timer_copy_B(timer):
     socketio.emit('copytimer', timer, namespace=f"/courtBcopy")
 
+@socketio.on('alonetimer', namespace="/courtA")
+def timer_alone_A(timer):
+    socketio.emit('alonetimer', timer, namespace="/alonetimerA")
+
+@socketio.on('alonetimer', namespace="/courtB")
+def timer_alone_B(timer):
+    socketio.emit('alonetimer', timer, namespace="/alonetimerB")
+
 def new_fixture_slaves(fixture_queue: FixtureQueue, new_fixture, crt):
     fixture_queue.next_fixture()
     socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
     socketio.emit('nextfixture', new_fixture, namespace=f"/court{crt}copy") 
+    socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
+    socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
+    socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
 
 @socketio.on('newfixture', namespace="/courtA")
 def new_fixture_ticker_A(new_fixture):
@@ -265,10 +313,12 @@ def play_siren_copy_B():
 @socketio.on('showtimeticker', namespace="/courtA")
 def show_time_ticker_A():
     socketio.emit('showtimer', namespace="/courtBticker")
+    socketio.emit('showtimer', namespace="/alonetimerA")
 
 @socketio.on('showtimeticker', namespace="/courtB")
 def show_time_ticker_B():
     socketio.emit('showtimer', namespace="/courtBticker")
+    socketio.emit('showtimer', namespace="/alonetimerB")
 
 """
 HANDLE GOALS, FOULS AND PENALTY SHOOTOUTS
@@ -279,11 +329,13 @@ def handle_score_update(fixture_queue: FixtureQueue, cursor, crt, update):
         dbqueue.put((cursor, f"UPDATE fixtures SET home_score = {update['homeGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}copy")
+        socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
     else:
         fixture_queue.get_current_fixture().set_away_score(update['awayGoals'])
         dbqueue.put((cursor, f"UPDATE fixtures SET away_score = {update['awayGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}copy")
+        socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
 
 @socketio.on('score', namespace="/courtA")
 def score_A(update):
@@ -516,29 +568,6 @@ def start_game_B():
 @socketio.on('disconnect')
 def disconnect():
     pass
-
-# @socketio.on('allfinished', namespace="/courtA")
-# def allfinished():
-#     if fixture_queue_A.need_upload_results():
-#         global courtAfinished
-#         courtAfinished = True
-#         global publish_thread
-#         if publish_thread is None and courtBfinished:
-#             publish_thread = Thread(target=results_publisher)
-#             publish_thread.daemon = True
-#             publish_thread.start()
-
-# @socketio.on('allfinished', namespace="/courtB")
-# def allfinished():
-#     if fixture_queue_B.need_upload_results():
-#         global courtBfinished
-#         courtBfinished = True
-#         global publish_thread
-#         if publish_thread is None and courtAfinished:
-#             print("Got to publishing step.")
-#             publish_thread = Thread(target=results_publisher)
-#             publish_thread.daemon = True
-#             publish_thread.start()
 
 if __name__ == '__main__' and (fixture_queue_A.has_games() or fixture_queue_B.has_games()):
     if not fixture_queue_A.has_games():

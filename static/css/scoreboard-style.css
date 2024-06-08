@@ -171,10 +171,12 @@ html,body {
 }
 
 .penalty {
-    height: 12vh;
-    width: 12vh;
+    height: 13vh;
+    width: 13vh;
     border-radius: 50%;
     display: inline-block;
+    font-size: 9vh;
+    color: black;
 }
 
 .untaken {
@@ -185,9 +187,19 @@ html,body {
     background-color: #00ff00;
 }
 
+.scored::before {
+    content: '\2714';
+    margin: auto;
+  }
+
 .missed {
     background-color: red;
 }
+
+.missed::before {
+    content: '\2716';
+    margin: auto;
+  }
 
 .number-penalties {
     margin: auto;
