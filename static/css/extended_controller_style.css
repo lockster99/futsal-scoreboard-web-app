@@ -1,0 +1,291 @@
+body {
+    text-align: center !important;
+    font-family: Tahoma, sans-serif;
+    touch-action: manipulation;
+    font-size: 1.2vw;
+}
+
+#gameControlContainer {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.verticalContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.horizontalContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.teamContainer {
+    width: 35%;
+}
+
+.timerGameContainer {
+    width: 30%;
+}
+
+.nameHeader {
+    justify-content: center;
+    font-size: 2vw;
+    margin-bottom: 1.5vw;
+}
+
+.footer {
+    background-color: #222222;
+    display: flex;
+    font-size: 2vw;
+    margin-top: auto;
+}
+
+.selected {
+    background-color: #444444 !important;
+}
+
+.footer-item {
+    border: 2px solid gray;
+    padding: 2vh 0;
+    color: white
+}
+
+.hide {
+    display: none !important;
+}
+
+.goalsContainer {
+    margin-bottom: 4vw;
+}
+
+.timerContainer {
+    margin-bottom: 1vw;
+}
+
+/* .goals {
+    font-size: 5vw;
+}
+
+.fouls {
+    font-size: 2vw;
+} */
+
+.half-width {
+    width: 50%
+}
+
+.button {
+    margin: 0.4vw 1vw;
+    padding: 0.9vw;
+    background-color: #999999;
+}
+
+.button:active {
+    opacity: 60%;
+}
+
+.plusButton {
+    background-color: green;
+    color: white;
+    width: 35%;
+    font-size: 4vw;
+}
+
+.takeButton {
+    width: 35%;
+    background-color: red;
+    color: white;
+    font-size: 4vw;
+}
+
+.goalFoulNumber {
+    font-size: 5vw;
+    width: 30%;
+}
+
+.goalsFoulsHeader {
+    font-size: 2.5vw;
+}
+
+.periodDisplay{
+    font-size: 2.5vw;
+}
+
+.timerDisplay {
+    font-size: 5vw;
+}
+
+.input {
+    margin: 0 1vw;
+}
+
+/* .timerContainer {
+    padding-bottom: 1.5vw;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.margin-div {
+    width: 1.5vh;
+}
+
+#gameControl {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5vh;
+    border-bottom: 0.1vh solid black;
+}
+
+#startPeriod {
+    background-color: green;
+    color: white;
+}
+
+#nextGame {
+    background-color: lavender;
+}
+
+.hide {
+    display: none !important;
+}
+
+.time-change-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.input-box {
+    font-family: Tahoma, sans-serif;
+    font-size: 3vh;
+}
+
+.time-input {
+    width: 65%;
+}
+
+.unit-input {
+    width: 35%;
+}
+
+#bringForward {
+    background-color: greenyellow;
+    min-width: 47%;
+}
+
+#delay {
+    background-color: orange;
+    min-width: 47%;
+}
+
+.time-entry {
+    display: flex;
+    flex-direction: row;
+    margin: 1.5vh;
+}
+
+#sirenLoop {
+    background-color: skyblue;
+}
+
+#siren {
+    background-color: lightskyblue;
+}
+
+.pause-colour {
+    background-color: yellow;
+}
+
+.play-colour {
+    background-color: lime;
+}
+
+.restOf {
+    font-size: 3vh;
+}
+
+/* .scoreControl {
+
+} */
+
+.teamNameLayout {
+    display: flex;
+}
+
+.flex-row {
+    display: flex;
+}
+
+.teamName {
+    width: 50%;
+    font-size: 3vh;
+}
+
+.plusRow {
+    display: flex;
+}
+
+.takeRow {
+    display: flex;
+}
+
+.footer {
+    background-color: #222222;
+    display: flex;
+}
+
+.selected {
+    background-color: #444444 !important;
+}
+
+.footer-item {
+    border: 2px solid gray;
+    padding: 1.5vh 0;
+    color: white
+}
