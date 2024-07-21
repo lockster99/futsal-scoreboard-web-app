@@ -137,35 +137,49 @@ $(document).ready(function(){
 
 
     function timer(timeStamp) {
+        // If the period has ended
         if(Date.now() >= targetTime) {
-
+            // If the siren is to be played at the end of the period
             if (currentPeriod.endSiren) {
                 socket.emit('playsiren');
                 siren.play();
             }
+            // If the current period is full time
             if (currentPeriod.displayName === "Full time") {
+                // If there's a fixture after this one in the queue
                 if (current+1 < fixtureQueue.length) {
                     newFixture();
-                } else {
+                } 
+                // If there are no fixtures left in the queue
+                else {
                     stop = true;
                     if (!finished) {
                         socket.emit('allfinished');
                     }
                     finished = true;
                 }
-            } else {
+            } 
+            // If the current period is not full time
+            else {
+                // If the ticker is to show the time in the current period
                 if (currentPeriod.showTimeTicker) {
+                    // If the current period is to show the time counting up from zero
                     if (currentPeriod.countUp) {
                         updateTimer((prevEndTime+currentPeriod.periodLength)/1000);
-                    } else {
+                    } 
+                    // If the current period is to show the time counting down to zero
+                    else {
                         updateTimer(0);
                     }
+                    // Update the previous end time to the end time of the current period, before the period is updated
                     prevEndTime = prevEndTime + currentPeriod.periodLength;
                 }
+                // If the current period does not decide whether to go to extra time or penalties, and the home and away goals are not equal
                 if ((currentPeriod.decidesExtraTime || currentPeriod.decidesPenalties) && 
                         currentFixture.homeGoals != currentFixture.awayGoals) {
-                    period = periodConfiguration.periods.length - 2;
+                    period = periodConfiguration.periods.length - 2; // Set to the second last period
                     updatePeriod();
+                // If the current period decides whether to go to penalties, and the home and away goals are equal
                 } else if (currentPeriod.decidesPenalties && currentFixture.homeGoals === currentFixture.awayGoals) {
                     // Move to penalties
                     currentFixture.wentPenalties = true;
@@ -173,34 +187,46 @@ $(document).ready(function(){
                     paused = true;
                     updatePeriod();
                     showPenaltyShootout();
-                } else {
+                } 
+                // Otherwise update the period as normal
+                else {
                     updatePeriod();
                 }
             } 
         }  
+        // If not stopped
         if (!stop) {
+            // If not paused
             if (!paused) {
                 time = (prevEndTime + currentPeriod.periodLength - (targetTime - Date.now()))/1000;   // for display of time
                 if (!currentPeriod.countUp) {
                     time = (targetTime - Date.now())/1000;   // for display of time till stop
                 }
-            } else {
+            } 
+            // If paused
+            else {
+                // If there's a penalty shootout and it has just been completed
                 if (hasPenaltiesFinished()) {
                     // End penalties
                     paused = false;
                     updatePeriod();
                 }
+                // Extend the target time out by the elapsed time between function calls. Hence the timer will not move while paused.
                 targetTime = targetTime + (timeStamp-previousTimeStamp);
             }
+            // Update the previous time stamp in preparation for the next function call 
             previousTimeStamp = timeStamp;
+            
+            // Update the timer if the period is not paused and is to show the time
             if (!paused && currentPeriod.showTime) {
                 updateTimer(time);
             }
+            // Use requestAnimationFrame to call the timer function at the next display refresh
             requestAnimationFrame(timer); // continue animation until stop 
         }
     }
 
-
+    // Function to manually start the current period timer
     function startPeriod() {
         if (!currentPeriod.autoStart & !periodManualStarted) {
             frameNumber = 0;
@@ -359,20 +385,25 @@ $(document).ready(function(){
         period++;
         currentPeriod = periodConfiguration.periods[period];
         targetTime = targetTime + currentPeriod.periodLength;
+        // If the timer is not to automatically start for the new period
         if (!currentPeriod.autoStart) {
-            firstUpdate = true;
+            // firstUpdate = true;
+            // Update the timer to zero if the period is to count up
             if (currentPeriod.countUp) {
                 updateTimer(prevEndTime/1000);
-            } else {
+            } 
+            // Update the timer to the period length if the period is to count down
+            else {
                 updateTimer(currentPeriod.periodLength/1000);
             }
+            // Stop the timer from executing, waiting for the period to be manually started
             stop = true;
         }
         $("#period").text(currentPeriod.displayName);
         if (currentPeriod.resetFouls) {
             resetFouls();
         }
-        firstUpdate = true;
+        // firstUpdate = true;
         socket.emit('updateperiod', currentPeriod);
         if (currentPeriod.showTimeTicker) {
             socket.emit('showtimeticker');

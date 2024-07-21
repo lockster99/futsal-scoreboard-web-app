@@ -507,3 +507,20 @@ class FixtureQueue(object):
 
     def set_alonetimer_connected(self, connected: bool):
         self._alonetimer_connected = connected
+
+
+def load_default_fixture_queue():
+    pre_game = Period(0, "Pre game", "Pre game", None, "", True, True, False, False, False, True, True, False, False, False, False, 0)
+    first_half = Period(1, "First half", "First half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 1)
+    half_time = Period(2, "Half time", "Half time", 8*minute, "", True, True, False, False, False, False, False, False, False, False, False, 2)
+    second_half = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
+    full_time = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
+    periods = [pre_game, first_half, half_time, second_half, full_time]
+    period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 0, "Standard F-League period configuration", periods)
+    home_team = Team(1, 1, "Ipswich Futsal", "green", "IPS", "ipswich-futsal-rgb")
+    away_team = Team(2, 1, "Sala Time FC", "purple", "SAL", "sala-time")
+    competition = Competition(1, "2024", "F-League", False, True, True)
+    fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
+                      datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
+    fixture_queue = FixtureQueue([fixture])
+    return fixture_queue
