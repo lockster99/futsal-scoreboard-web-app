@@ -1,7 +1,7 @@
 const second = 1000;
 const minute = 60*second;
 var socket = io;
-$(document).ready(function(){
+$(document).ready(function() {
     // Initialise variables
     var fixtureQueue;
     var periodConfiguration;
@@ -12,22 +12,28 @@ $(document).ready(function(){
     var currentPeriod;
     var targetTime;
     var stop = false;
+    var stopTimeout = true;
     var loaded = false;
     var siren = new Audio("/static/audio/siren.mp3");
     //var sirenLoop = new Audio("/static/audio/siren-loop.mp3");
     var mins, secs, minsTxt, secsTxt;
+    var timeoutMins, timeoutSecs, timeoutMinsTxt, timeoutSecsTxt;
     var previousTimeStamp;
+    var previousTimeoutTimeStamp;
     var currentHomeLogo = document.getElementById('defaultHomeLogo');
     var currentAwayLogo = document.getElementById('defaultAwayLogo');
     var suddenDeathApplied = false;
     var timerString;
+    var timeoutTimerString;
     var periodManualStarted = false;
     var prevEndTime = 0;
     var prevTime = -1;
     var tickerConnected = false;
     var copyConnected = false;
     var aloneTimerConnected = false;
+    var extendedRemoteConnected = false;
     var time;
+    var timeoutTime;
     var finished = false;
 
     //connect to the socket server.
@@ -95,6 +101,9 @@ $(document).ready(function(){
     }
 
 
+    /**
+     * Updates the shown content based on the current fixture settings.
+     */
     function updateShownContent() {
         if (!currentFixture.showTeams) {
             document.getElementById("goalsContainer").classList.add("display-none");
@@ -226,10 +235,70 @@ $(document).ready(function(){
         }
     }
 
+    function timeoutTimer(timeoutTimeStamp) {
+        // If the period has ended
+        if(Date.now() >= targetTimeoutTime) {
+            // If the siren is to be played at the end of the period
+            updateTimeoutTimer(0);
+            socket.emit('playsiren');
+            siren.play();
+            socket.emit('timeoutover');
+            if (copyConnected) {
+                socket.emit('copytimer', timerString);
+            }
+            if (extendedRemoteConnected) {
+                socket.emit('ertimer', timerString);
+            }
+            stopTimeout = true;
+            // Show period timer
+            document.getElementById("period-timer").classList.remove("display-none");
+            // Hide timeout timer
+            document.getElementById("timeout").classList.add("display-none");
+        }
+        // If not stopped
+        if (!stopTimeout) {
+            // If not paused
+            timeoutTime = (targetTimeoutTime - Date.now())/1000;   // for display of time
+            // Update the previous time stamp in preparation for the next function call 
+            previousTimeoutTimeStamp = timeoutTimeStamp;
+            
+            // Update the timeout timer
+            updateTimeoutTimer(timeoutTime);
+
+            // Use requestAnimationFrame to call the timer function at the next display refresh
+            requestAnimationFrame(timeoutTimer); // continue animation until stop 
+        }
+    }
+
+    function updateTimeoutTimer(time) {
+        timeoutMins = (Math.max(0, Math.floor(time/60)));
+        timeoutSecs = Math.ceil((time % 60));
+        if (timeoutSecs === 60) {
+            timeoutMins++;
+            timeoutSecs = 0;
+        }
+        timeoutSecs = Math.max(0, timeoutSecs);
+        timeoutMinsTxt = timeoutMins.toString().padStart(2, '0');
+        timeoutSecsTxt = timeoutSecs.toString().padStart(2, '0');
+        if (timeoutTimerString != `${timeoutMinsTxt}:${timeoutSecsTxt}`) {
+            timeoutTimerString = `${timeoutMinsTxt}:${timeoutSecsTxt}`;
+            $("#timeout-timer").text(timeoutTimerString);
+            if (copyConnected) {
+                socket.emit('copytimer', timeoutTimerString);
+            }
+            if (extendedRemoteConnected) {
+                socket.emit('ertimer', timeoutTimerString);
+            }
+        } else {
+            timeoutTimerString = `${timeoutMinsTxt}:${timeoutSecsTxt}`;
+            $("#timeout-timer").text(timeoutTimerString);
+        }
+    }
+
     // Function to manually start the current period timer
     function startPeriod() {
-        if (!currentPeriod.autoStart & !periodManualStarted) {
-            frameNumber = 0;
+        if (!currentPeriod.autoStart && !periodManualStarted && stopTimeout) {
+            // frameNumber = 0;
             stop = false;
             paused = false;
             socket.emit('pausestatus', paused);
@@ -239,15 +308,139 @@ $(document).ready(function(){
         }
     }
 
+    function timeout() {
+        paused = true;
+        socket.emit('pausestatus', paused);
+        stopTimeout = false;
+        // Hide main timer
+        document.getElementById("period-timer").classList.add("display-none");
+        // Show timeout timer
+        document.getElementById("timeout").classList.remove("display-none");
+        targetTimeoutTime = Date.now() + 60000;
+        // Start timeout timer
+        requestAnimationFrame(timeoutTimer);
+    }
+
+    socket.on('timeout', ()=> { 
+        timeout();
+    });
+
+    socket.on('canceltimeout', ()=> {
+        stopTimeout = true;
+        socket.emit('timeoutover');
+        // Show period timer
+        document.getElementById("period-timer").classList.remove("display-none");
+        // Hide timeout timer
+        document.getElementById("timeout").classList.add("display-none");
+        if (copyConnected) {
+            socket.emit('copytimer', timerString);
+        }
+        if (extendedRemoteConnected) {
+            socket.emit('ertimer', timerString);
+        }
+    });
+
     socket.on('startperiod', ()=> {
         startPeriod();
     });
 
+    socket.on('restartperiod', ()=> {
+        period--;
+        updatePeriod();
+    });
+
+    socket.on('previousperiod', ()=> {
+        if (period >= 1) {
+            period = period - 2;
+            updatePeriod();
+        }
+    });
+
+    socket.on('nextperiod', ()=> {
+        if (period < periodConfiguration.periods.length - 1) {
+            updatePeriod();
+        }
+    });
+
+    socket.on('restartgame', ()=> {
+        restartGame();
+    });
+
+    function restartGame() {
+        if (currentFixture.wentPenalties) {
+            cleanUpPenalties();
+        }
+        periodConfiguration = currentFixture.periodConfiguration;
+        period = 0;
+        currentPeriod = periodConfiguration.periods[period];
+        targetTime = getTargetTime();
+        prevEndTime = 0;
+        resetFouls();
+        $("#homeName").text(currentFixture.homeName);
+        $("#awayName").text(currentFixture.awayName);
+        $("#homeNamePenalties").text(currentFixture.homeName);
+        $("#awayNamePenalties").text(currentFixture.awayName);
+        updateHomeGoals(-currentFixture.homeGoals);
+        updateAwayGoals(-currentFixture.awayGoals);
+        updateHomeFouls(-currentFixture.homeFouls);
+        updateAwayFouls(-currentFixture.awayFouls);
+        $("#homeGoals").text(0);
+        $("#awayGoals").text(0);
+        $("#homeFouls").text(0);
+        $("#awayFouls").text(0);
+        $("#period").text(currentPeriod.displayName);
+        socket.emit('updateperiod', currentPeriod);
+        updateShownContent();
+        periodManualStarted = false;
+        if (stop && currentPeriod.autoStart) {
+            stop = false;
+            requestAnimationFrame(timer);
+        }
+    };
+
     socket.on('startnextgame', ()=> {
+        stop = true;
         newFixture();
         stop = false;
         requestAnimationFrame(timer);
     });
+
+    // socket.on('previousgame',()=> {
+    //     if (current > 0) {
+    //         current--;
+    //         if (currentFixture.wentPenalties) {
+    //             cleanUpPenalties();
+    //         }
+    //         fixtureQueue[current] = currentFixture;
+    //         currentFixture = fixtureQueue[current];
+    //         periodConfiguration = currentFixture.periodConfiguration;
+    //         period = 0;
+    //         currentPeriod = periodConfiguration.periods[period];
+    //         targetTime = getTargetTime();
+    //         prevEndTime = 0;
+    //         resetFouls();
+    //         $("#homeName").text(currentFixture.homeName);
+    //         $("#awayName").text(currentFixture.awayName);
+    //         $("#homeNamePenalties").text(currentFixture.homeName);
+    //         $("#awayNamePenalties").text(currentFixture.awayName);
+    //         updateHomeGoals(-currentFixture.homeGoals);
+    //         updateAwayGoals(-currentFixture.awayGoals);
+    //         updateHomeFouls(-currentFixture.homeFouls);
+    //         updateAwayFouls(-currentFixture.awayFouls);
+    //         $("#homeGoals").text(0);
+    //         $("#awayGoals").text(0);
+    //         $("#homeFouls").text(0);
+    //         $("#awayFouls").text(0);
+    //         $("#period").text(currentPeriod.displayName);
+    //         //socket.emit('newfixture', currentFixture);
+    //         updateShownContent();
+    //         periodManualStarted = false;
+    //         if (stop && currentPeriod.autoStart) {
+    //             stop = false;
+    //             requestAnimationFrame(timer);
+    //         }
+    //     }
+    // });
 
     socket.on('homegoaladd', () => {
         handleHomeGoalAdd();
@@ -299,10 +492,12 @@ $(document).ready(function(){
 
     socket.on('pause', ()=> {
         paused = true;
+        socket.emit('pausestatus', true);
     });
 
     socket.on('resume', ()=> {
         paused = false;
+        socket.emit('pausestatus', false);
     });
 
     socket.on('delay', (time)=> {
@@ -333,6 +528,10 @@ $(document).ready(function(){
         aloneTimerConnected = true;
     });
 
+    socket.on('extendedremoteconnected', ()=> {
+        extendedRemoteConnected = true;
+    });
+
     socket.on('siren', ()=> {
         siren.play();
     });
@@ -346,6 +545,16 @@ $(document).ready(function(){
 
     socket.on('endsirenloop', ()=> {
         sirenLoop.loop = false;
+    });
+
+    socket.on('changehomename', function(name) {
+        $("#homeName").text(name);
+        currentFixture.homeName = name;
+    });
+
+    socket.on('changeawayname', function(name) {
+        $("#awayName").text(name);
+        currentFixture.awayName = name;
     });
 
     function roundDecimal(number, decimalPlaces) {
@@ -378,13 +587,53 @@ $(document).ready(function(){
             if (currentPeriod.showTimeTicker && aloneTimerConnected) {
                 socket.emit('alonetimer', timerString);
             }
+            if (extendedRemoteConnected) {
+                socket.emit('ertimer', timerString);
+            }
+        }
+    }
+
+    function newUpdateTimer(time) {
+        mins = (Math.max(0, Math.floor(time/60)));
+        secs = Math.ceil((time % 60));
+        if (currentPeriod.countUp) {
+            secs = Math.floor((time % 60));
+        }
+        if (secs === 60) {
+            mins++;
+            secs = 0;
+        }
+        secs = Math.max(0, secs);
+        minsTxt = mins.toString().padStart(2, '0');
+        secsTxt = secs.toString().padStart(2, '0');
+        timerString = `${minsTxt}:${secsTxt}`;
+        $("#timer").text(timerString);
+        if ((60*mins+secs) != prevTime) {
+            prevTime = 60*mins + secs;
+            if (currentPeriod.showTimeTicker && tickerConnected) {
+                socket.emit('tickertimer', timerString);
+            }
+            if (copyConnected) {
+                socket.emit('copytimer', timerString);
+            }
+            if (currentPeriod.showTimeTicker && aloneTimerConnected) {
+                socket.emit('alonetimer', timerString);
+            }
+            if (extendedRemoteConnected) {
+                socket.emit('ertimer', timerString);
+            }
         }
     }
 
     function updatePeriod() {
         period++;
         currentPeriod = periodConfiguration.periods[period];
-        targetTime = targetTime + currentPeriod.periodLength;
+        if (currentPeriod.displayName === "Pre game") {
+            targetTime = getTargetTime();
+        } else {
+            targetTime = targetTime + currentPeriod.periodLength;
+        }
+        
         // If the timer is not to automatically start for the new period
         if (!currentPeriod.autoStart) {
             // firstUpdate = true;
@@ -408,7 +657,14 @@ $(document).ready(function(){
         if (currentPeriod.showTimeTicker) {
             socket.emit('showtimeticker');
         }
+        if (!currentPeriod.showTime) {
+            updateTimer(0);
+        }
         periodManualStarted = false;
+        if (stop && currentPeriod.autoStart) {
+            stop = false;
+            requestAnimationFrame(timer);
+        }   
     }
 
     function showPenaltyShootout() {

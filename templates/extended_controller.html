@@ -13,9 +13,9 @@
             <div id="gameControlContainer" class="full-width">
                 <div id="homeContainer" class="teamContainer verticalContainer">
                     <div id="homeNameHeader" class="nameHeader horizontalContainer">
-                        <span id="homeName" class="nameDisplay">Ipswich Futsal</span>
+                        <span class="homeName nameDisplay">Ipswich Futsal</span>
                         <span>&nbsp;</span>
-                        <span id="homeAbbreviation" class="abbreviationDisplay">(IPS)</span>
+                        <span class="homeAbbreviation abbreviationDisplay">(IPS)</span>
                     </div>
                     <div id="homeGoalsContainer" class="goalsContainer verticalContainer">
                         <span id="homeGoalsHeader" class="goalsFoulsHeader">GOALS</span>
@@ -39,33 +39,34 @@
                         <span id="timerControlName" class="nameDisplay">Timer & Game Setup</span>
                     </div>
                     <div class="timerContainer verticalContainer">
-                        <span class="periodDisplay">First half</span>
-                        <span class="timerDisplay">20:00</span>
+                        <span id="period" class="timer-header">Pre game</span>
+                        <span id="timeout-header" class="timer-header hide">TIMEOUT</span>
+                        <span id="timer">20:00</span>
                     </div>
                     <div class="timerControls verticalContainer">
-                        <div class="pausePlayButton button">Pause</div>
-                        <div class="startPeriodButton button">Start Period</div>
-                        <div class="timeoutButton button">Timeout (1:00)</div>
-                        <div class="playSirenButton button">Play Siren</div>
+                        <div id="pausePlay" class="button pause-colour">Pause</div>
+                        <div id="startPeriod" class="button">Start Period</div>
+                        <div id="timeout" class="button">Timeout (1:00)</div>
+                        <div id="playSiren" class="button">Play Siren</div>
                         <div class="restartRow horizontalContainer">
-                            <div class="restartGameButton half-width button">Restart Game</div>
-                            <div class="restartPeriodButton half-width button">Restart Period</div>
+                            <div id="restartGame" class="button half-width violet">Restart Game</div>
+                            <div id="restartPeriod" class="button half-width violet">Restart Period</div>
                         </div>
-                        <div class="moveGameRow horizontalContainer">
-                            <div class="previousGameButton half-width button">Previous Game</div>
-                            <div class="nextGameButton half-width button">Next Game</div>
+                        <div class="moveGameRow horizontalContainer hide">
+                            <div id="previousGame" class="button half-width">Previous Game</div>
+                            <div id="nextGame" class="button half-width">Next Game</div>
                         </div>
                         <div class="movePeriodRow horizontalContainer">
-                            <div class="previousPeriodButton half-width button">Previous Period</div>
-                            <div class="nextPeriodButton half-width button">Next Period</div>
+                            <div id="previousPeriod" class="button half-width violet">Previous Period</div>
+                            <div id="nextPeriod" class="button half-width violet">Next Period</div>
                         </div>
                     </div>
                 </div>
                 <div id="awayContainer" class="teamContainer verticalContainer">
                     <div id="awayNameHeader" class="nameHeader horizontalContainer">
-                        <span id="awayName" class="nameDisplay">Sala Time FC</span>
+                        <span class="awayName nameDisplay">Sala Time FC</span>
                         <span>&nbsp;</span>
-                        <span id="awayAbbreviation" class="abbreviationDisplay">(SAL)</span>
+                        <span class="awayAbbreviation abbreviationDisplay">(SAL)</span>
                     </div>
                     <div id="awayGoalsContainer" class="goalsContainer verticalContainer">
                         <span id="awayGoalsHeader" class="goalsFoulsHeader">GOALS</span>
@@ -88,9 +89,9 @@
             <div id="configContainer" class="horizontalContainer full-width hide">
                 <div id="homeConfigContainer" class="teamContainer">
                     <div id="homeNameHeader" class="nameHeader horizontalContainer">
-                        <span id="homeName" class="nameDisplay">Ipswich Futsal</span>
+                        <span class="homeName nameDisplay">Ipswich Futsal</span>
                         <span>&nbsp;</span>
-                        <span id="homeAbbreviation" class="abbreviationDisplay">(IPS)</span>
+                        <span class="homeAbbreviation abbreviationDisplay">(IPS)</span>
                     </div>
                     <div id="editHomeAttributes" class="teamAttributes verticalContainer">
                         <div id="homeNameRow" class="nameRow horizontalContainer">
@@ -115,14 +116,28 @@
                     <div id="timerControlHeader" class="nameHeader horizontalContainer">
                         <span id="timerControlName" class="nameDisplay">Timer & Game Setup</span>
                     </div>
-                    <div class="addTimeRow horizontalContainer">
-                        <div class="addTimwButton half-width button">Add Time</div>
-                        <input class="addTimeInput input half-width" type="text" placeholder="Enter Time">
+                    <div id="delayRow" class="horizontalContainer full-width time-change-row">
+                        <div id="addTime" class="button half-width">Add Time</div>
+                        <div id="delay-entry" class="time-entry input half-width">
+                            <input id="delay-time" type="number" max=120 class="time-input input-box">
+                            <select id="delay-unit" class="unit-input input-box">
+                                <option>s</option>
+                                <option>m</option>
+                                <option>h</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="takeTimeRow horizontalContainer">
-                        <div class="takeTimeButton half-width button">Take Time</div>
-                        <input class="takeTimeInput input half-width" type="text" placeholder="Enter Time">
-                    </div>
+                    <div id="bringForwardRow" class="horizontalContainer full-width time-change-row">
+                        <div id="takeTime" class="button half-width">Take Time</div>
+                        <div id="bring-forward-entry" class="time-entry input half-width">
+                            <input id="forwardTime" type="number" max=120 class="time-input input-box">
+                            <select id="forwardUnit" class="unit-input input-box">
+                                <option>s</option>
+                                <option>m</option>
+                                <option>h</option>
+                            </select>
+                        </div>
+                    </div>      
                     <div class="setTimeRow horizontalContainer">
                         <div class="setTimeButton half-width button">Set Time</div>
                         <input class="setTimeInput input half-width" type="text" placeholder="Enter Time">
@@ -134,9 +149,9 @@
                 </div>
                 <div id="awayConfigContainer" class="teamContainer">
                     <div id="awayNameHeader" class="nameHeader horizontalContainer">
-                        <span id="awayName" class="nameDisplay">Sala Time FC</span>
+                        <span class="awayName nameDisplay">Sala Time FC</span>
                         <span>&nbsp;</span>
-                        <span id="awayAbbreviation" class="abbreviationDisplay">(SAL)</span>
+                        <span class="awayAbbreviation abbreviationDisplay">(SAL)</span>
                     </div>
                     <div id="editAwayAttributes" class="teamAttributes verticalContainer">
                         <div id="awayNameRow" class="nameRow horizontalContainer">

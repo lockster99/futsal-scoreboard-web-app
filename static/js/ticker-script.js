@@ -133,6 +133,26 @@ $(document).ready(function(){
         newFixture();
     });
 
+    socket.on('changehomeabbrev', function(abbrev) {
+        $(".homeTeam").text(abbrev);
+        currentFixture.homeAbbrev = abbrev;
+    });
+
+    socket.on('changeawayabbrev', function(abbrev) {
+        $(".awayTeam").text(abbrev);
+        currentFixture.awayAbbrev = abbrev;
+    });
+
+    socket.on('changehomecolour', function(colour) {
+        setTeamColour('home', colour);
+        currentFixture.homeColour = colour;
+    });
+
+    socket.on('changeawaycolour', function(colour) {
+        setTeamColour('away', colour);
+        currentFixture.awayColour = colour;
+    });
+
     function resetPenalties() {
         var penaltyDots = document.getElementsByClassName('penalty');
         for (var i=0; i<penaltyDots.length; i++) {

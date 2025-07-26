@@ -2,7 +2,7 @@ body {
     text-align: center !important;
     font-family: Tahoma, sans-serif;
     touch-action: manipulation;
-    font-size: 1.5vw;
+    font-size: 1.2vw;
 }
 
 #gameControlContainer {
@@ -74,13 +74,21 @@ body {
     margin-bottom: 1vw;
 }
 
+/* .goals {
+    font-size: 5vw;
+}
+
+.fouls {
+    font-size: 2vw;
+} */
+
 .half-width {
     width: 50%
 }
 
 .button {
     margin: 0.4vw 1vw;
-    padding: 1vw 0vw;
+    padding: 0.9vw;
     background-color: #999999;
 }
 
@@ -111,17 +119,57 @@ body {
     font-size: 2.5vw;
 }
 
-.timer-header {
+.periodDisplay{
     font-size: 2.5vw;
 }
 
-#timer {
+.timerDisplay {
     font-size: 5vw;
 }
 
 .input {
     margin: 0 1vw;
 }
+
+/* .timerContainer {
+    padding-bottom: 1.5vw;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .margin-div {
     width: 1.5vh;
@@ -166,33 +214,28 @@ body {
     width: 35%;
 }
 
-#takeTime {
+#bringForward {
     background-color: greenyellow;
+    min-width: 47%;
 }
 
-#addTime {
+#delay {
     background-color: orange;
-}
-
-#timeout {
-    background-color: orange;
-}
-
-.violet {
-    background-color: violet;
+    min-width: 47%;
 }
 
 .time-entry {
     display: flex;
     flex-direction: row;
+    margin: 1.5vh;
 }
 
 #sirenLoop {
     background-color: skyblue;
 }
 
-#playSiren {
-    background-color: skyblue;
+#siren {
+    background-color: lightskyblue;
 }
 
 .pause-colour {
@@ -207,11 +250,28 @@ body {
     font-size: 3vh;
 }
 
+/* .scoreControl {
+
+} */
+
 .teamNameLayout {
     display: flex;
 }
 
 .flex-row {
+    display: flex;
+}
+
+.teamName {
+    width: 50%;
+    font-size: 3vh;
+}
+
+.plusRow {
+    display: flex;
+}
+
+.takeRow {
     display: flex;
 }
 
@@ -228,12 +288,4 @@ body {
     border: 2px solid gray;
     padding: 1.5vh 0;
     color: white
-}
-
-.pause-colour {
-    background-color: yellow;
-}
-
-.play-colour {
-    background-color: lime;
 }

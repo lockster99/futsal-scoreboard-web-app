@@ -11,9 +11,13 @@
             <div id="homeLogo">
                 {{ homeLogo }}
             </div>
-            <div id="period-timer" class="text-div top-align">
-                <div id="period">{{ period }}</div>
-                <div id="timer">TIMER</div>
+            <div id="period-timer" class="timer-container text-div top-align">
+                <div id="period" class="timer-header">{{ period }}</div>
+                <div id="timer" class="timer-body">TIMER</div>
+            </div>
+            <div id="timeout" class="timer-container text-div top-align display-none">
+                <div id="timeout-header" class="timer-header">TIMEOUT</div>
+                <div id="timeout-timer" class="timer-body">1:00</div>
             </div>
             <div>
                 {{ awayLogo }}

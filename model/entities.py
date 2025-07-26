@@ -18,6 +18,9 @@ class NameObject(object):
 
     def get_name(self):
         return self._name
+    
+    def set_name(self, name):
+        self._name = name
 
 
 class Season(NameObject):
@@ -243,9 +246,15 @@ class Team(NameObject):
         
     def get_colour(self):
         return self._colour
+    
+    def set_colour(self, colour):
+        self._colour = colour
 
     def get_abbreviation(self):
         return self._abbreviation
+    
+    def set_abbreviation(self, abbreviation):
+        self._abbreviation = abbreviation
 
     def get_logo(self):
         return self._logo
@@ -516,9 +525,9 @@ def load_default_fixture_queue():
     second_half = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
     full_time = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
     periods = [pre_game, first_half, half_time, second_half, full_time]
-    period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 0, "Standard F-League period configuration", periods)
+    period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
     home_team = Team(1, 1, "Ipswich Futsal", "green", "IPS", "ipswich-futsal-rgb")
-    away_team = Team(2, 1, "Sala Time FC", "purple", "SAL", "sala-time")
+    away_team = Team(2, 1, "South Brisbane Fury", "black", "SBF", "south-brisbane-fury")
     competition = Competition(1, "2024", "F-League", False, True, True)
     fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
                       datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
