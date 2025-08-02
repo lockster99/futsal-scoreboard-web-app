@@ -13,9 +13,9 @@
             <div id="gameControlContainer" class="full-width">
                 <div id="homeContainer" class="teamContainer verticalContainer">
                     <div id="homeNameHeader" class="nameHeader horizontalContainer">
-                        <span class="homeName nameDisplay">Ipswich Futsal</span>
+                        <span class="homeName nameDisplay">{{ homeName }}</span>
                         <span>&nbsp;</span>
-                        <span class="homeAbbreviation abbreviationDisplay">(IPS)</span>
+                        <span class="homeAbbreviation abbreviationDisplay">({{ homeAbbrev }})</span>
                     </div>
                     <div id="homeGoalsContainer" class="goalsContainer verticalContainer">
                         <span id="homeGoalsHeader" class="goalsFoulsHeader">GOALS</span>
@@ -64,9 +64,9 @@
                 </div>
                 <div id="awayContainer" class="teamContainer verticalContainer">
                     <div id="awayNameHeader" class="nameHeader horizontalContainer">
-                        <span class="awayName nameDisplay">Sala Time FC</span>
+                        <span class="awayName nameDisplay">{{ awayName }}</span>
                         <span>&nbsp;</span>
-                        <span class="awayAbbreviation abbreviationDisplay">(SAL)</span>
+                        <span class="awayAbbreviation abbreviationDisplay">({{ awayAbbrev }})</span>
                     </div>
                     <div id="awayGoalsContainer" class="goalsContainer verticalContainer">
                         <span id="awayGoalsHeader" class="goalsFoulsHeader">GOALS</span>
@@ -89,26 +89,26 @@
             <div id="configContainer" class="horizontalContainer full-width hide">
                 <div id="homeConfigContainer" class="teamContainer">
                     <div id="homeNameHeader" class="nameHeader horizontalContainer">
-                        <span class="homeName nameDisplay">Ipswich Futsal</span>
+                        <span class="homeName nameDisplay">{{ homeName }}</span>
                         <span>&nbsp;</span>
-                        <span class="homeAbbreviation abbreviationDisplay">(IPS)</span>
+                        <span class="homeAbbreviation abbreviationDisplay">({{ homeAbbrev }})</span>
                     </div>
                     <div id="editHomeAttributes" class="teamAttributes verticalContainer">
                         <div id="homeNameRow" class="nameRow horizontalContainer">
                             <div id="editHomeNameButton" class="editNameButton half-width button">Update Name</div>
-                            <input id="homeNameInput" class="nameInput input half-width" type="text" placeholder="Enter Team Name">
+                            <input id="homeNameInput" class="nameInput input input-box half-width" type="text" placeholder="Enter Team Name">
                         </div>
                         <div id="homeAbbreviationRow" class="abbreviationRow horizontalContainer">
                             <div id="editHomeAbbreviationButton" class="editAbbreviationButton half-width button">Update Abbreviation</div>
-                            <input id="homeAbbreviationInput" class="abbreviationInput input half-width" type="text" placeholder="Enter Team Abbreviation">
+                            <input id="homeAbbreviationInput" class="abbreviationInput input input-box half-width" type="text" placeholder="Enter Team Abbreviation">
                         </div>
                         <div id="homeColourRow" class="colourRow horizontalContainer">
                             <div id="editHomeColourButton" class="editColour half-width button">Update Colour</div>
-                            <input id="homeColourInput" class="colourInput input half-width" name="homeColour" type="color" value="#007700">
+                            <input id="homeColourInput" class="colourInput input input-box half-width" name="homeColour" type="color" value="#007700">
                         </div>
                         <div id="homeLogoRow" class="logoRow horizontalContainer">
                             <div id="editHomeLogoButton" class="editLogo half-width button">Update Logo</div>
-                            <input type="file" id="homeLogoInput" class="logoInput input half-width" name="homeLogo" accept="image/*">
+                            <input type="file" id="homeLogoInput" class="logoInput input input-box half-width" name="homeLogo" accept="image/*">
                         </div>  
                     </div>
                 </div>
@@ -140,35 +140,35 @@
                     </div>      
                     <div class="setTimeRow horizontalContainer">
                         <div class="setTimeButton half-width button">Set Time</div>
-                        <input class="setTimeInput input half-width" type="text" placeholder="Enter Time">
+                        <input class="setTimeInput input input-box half-width" type="text" placeholder="Enter Time">
                     </div>
                     <div class="setPeriodLengthRow horizontalContainer">
                         <div class="setPeriodLengthButton half-width button">Set Period Length</div>
-                        <input class="setPeriodLengthInput input half-width" type="text" placeholder="Enter Period Length">
+                        <input class="setPeriodLengthInput input input-box half-width" type="text" placeholder="Enter Period Length">
                     </div>
                 </div>
                 <div id="awayConfigContainer" class="teamContainer">
                     <div id="awayNameHeader" class="nameHeader horizontalContainer">
-                        <span class="awayName nameDisplay">Sala Time FC</span>
+                        <span class="awayName nameDisplay">{{ awayName }}</span>
                         <span>&nbsp;</span>
-                        <span class="awayAbbreviation abbreviationDisplay">(SAL)</span>
+                        <span class="awayAbbreviation abbreviationDisplay">({{ awayAbbrev }})</span>
                     </div>
                     <div id="editAwayAttributes" class="teamAttributes verticalContainer">
                         <div id="awayNameRow" class="nameRow horizontalContainer">
                             <div id="editAwayNameButton" class="editNameButton half-width button">Update Name</div>
-                            <input id="awayNameInput" class="nameInput input half-width" type="text" placeholder="Enter Team Name">
+                            <input id="awayNameInput" class="nameInput input input-box half-width" type="text" placeholder="Enter Team Name">
                         </div>
                         <div id="awayAbbreviationRow" class="abbreviationRow horizontalContainer">
                             <div id="editAwayAbbreviationButton" class="editAbbreviationButton half-width button">Update Abbreviation</div>
-                            <input id="awayAbbreviationInput" class="abbreviationInput input half-width" type="text" placeholder="Enter Team Abbreviation">
+                            <input id="awayAbbreviationInput" class="abbreviationInput input input-box half-width" type="text" placeholder="Enter Team Abbreviation">
                         </div>
                         <div id="awayColourRow" class="colourRow horizontalContainer">
                             <div id="editAwayColourButton" class="editColour half-width button">Update Colour</div>
-                            <input id="awayColourInput" class="colourInput input half-width" name="awayColour" type="color" value="#880088">
+                            <input id="awayColourInput" class="colourInput input input-box half-width" name="awayColour" type="color" value="#880088">
                         </div>
                         <div id="awayLogoRow" class="logoRow horizontalContainer">
                             <div id="editAwayLogoButton" class="editLogo half-width button">Update Logo</div>
-                            <input type="file" id="awayLogoInput" class="logoInput input half-width" name="awayLogo" accept="image/*">
+                            <input type="file" id="awayLogoInput" class="logoInput input input-box half-width" name="awayLogo" accept="image/*">
                         </div>  
                     </div>
                 </div>

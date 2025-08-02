@@ -125,8 +125,29 @@ def alonetimerB():
 
 @app.route('/extendedRemoteB')
 def extendedRemoteB():
-    return render_template('extended_controller.html')
+    return render_extended_controller(fixture_queue_B)
 
+def render_extended_controller(fixture_queue: FixtureQueue):
+    return render_template('extended_controller.html', 
+                            homeName = fixture_queue.get_current_fixture().get_home_team().get_name(),
+                            awayName = fixture_queue.get_current_fixture().get_away_team().get_name(),
+                            homeAbbrev = fixture_queue.get_current_fixture().get_home_team().get_abbreviation(),
+                            awayAbbrev = fixture_queue.get_current_fixture().get_away_team().get_abbreviation()
+    )
+
+# @app.route('/extendedRemoteB', methods=['POST'])
+# def upload_logos():
+#     if 'homeLogo' in request.files:
+#         home_logo = request.files['homeLogo']
+#         if home_logo.filename != '':
+#             home_logo.save(f'static/img/{fixture_queue_B.get_current_fixture().get_home_team().get_id()}-logo.png')
+#             fixture_queue_B.get_current_fixture().get_home_team().set_logo(f'{fixture_queue_B.get_current_fixture().get_home_team().get_id()}-logo')
+#     if 'awayLogo' in request.files:
+#         away_logo = request.files['awayLogo']
+#         if away_logo.filename != '':
+#             away_logo.save(f'static/img/{fixture_queue_B.get_current_fixture().get_away_team().get_id()}-logo.png')
+#             fixture_queue_B.get_current_fixture().get_away_team().set_logo(f'{fixture_queue_B.get_current_fixture().get_away_team().get_id()}-logo')
+#     return render_extended_controller(fixture_queue_B)
 
 """
 CONNECTION SOCKET EVENTS

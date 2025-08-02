@@ -71,6 +71,8 @@ $(document).ready(function(){
             socket.emit('pause');
             btn.classList.replace('pause-colour', 'play-colour');
             btn.textContent = "Play";
+        } else if (pause && timeout) {
+            // Handle timeout case and do nothing.
         } else {
             pause = false;
             socket.emit('resume');
