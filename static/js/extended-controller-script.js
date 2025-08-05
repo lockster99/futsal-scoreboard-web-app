@@ -64,7 +64,7 @@ $(document).ready(function(){
         socket.emit('siren');
     });
 
-    document.getElementById('pausePlay').addEventListener('click', ()=> {
+    function pausePlay() {
         var btn = document.getElementById('pausePlay');
         if (!pause) {
             pause = true;
@@ -78,6 +78,16 @@ $(document).ready(function(){
             socket.emit('resume');
             btn.classList.replace('play-colour', 'pause-colour');
             btn.textContent = "Pause";
+        }
+    }
+
+    document.getElementById('pausePlay').addEventListener('click', ()=> {
+        pausePlay();
+    });
+
+    document.addEventListener('keyup', event => {
+        if (event.code === 'Space') {
+            pausePlay();
         }
     });
 
