@@ -107,8 +107,10 @@
                             <input id="homeColourInput" class="colourInput input input-box half-width" name="homeColour" type="color" value="#007700">
                         </div>
                         <div id="homeLogoRow" class="logoRow horizontalContainer">
-                            <div id="editHomeLogoButton" class="editLogo half-width button">Update Logo</div>
-                            <input type="file" id="homeLogoInput" class="logoInput input input-box half-width" name="homeLogo" accept="image/*">
+                            <form id="homeLogoForm" class="logoRow horizontalContainer" method="post" enctype="multipart/form-data">
+                                <button id="editHomeLogoButton" class="editLogo half-width button">Update Logo</button>
+                                <input type="file" id="homeLogoInput" class="logoInput input input-box half-width" name="homeLogo" accept="image/*">
+                            </form>
                         </div>  
                     </div>
                 </div>
@@ -166,9 +168,12 @@
                             <div id="editAwayColourButton" class="editColour half-width button">Update Colour</div>
                             <input id="awayColourInput" class="colourInput input input-box half-width" name="awayColour" type="color" value="#880088">
                         </div>
+                        
                         <div id="awayLogoRow" class="logoRow horizontalContainer">
-                            <div id="editAwayLogoButton" class="editLogo half-width button">Update Logo</div>
-                            <input type="file" id="awayLogoInput" class="logoInput input input-box half-width" name="awayLogo" accept="image/*">
+                            <form id="awayLogoForm" class="logoRow horizontalContainer" method="post" enctype="multipart/form-data">
+                                <button id="editAwayLogoButton" class="editLogo half-width button">Update Logo</button>
+                                <input type="file" id="awayLogoInput" class="logoInput input input-box half-width" name="awayLogo" accept="image/*">
+                            </form>
                         </div>  
                     </div>
                 </div>

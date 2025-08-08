@@ -285,4 +285,57 @@ $(document).ready(function(){
         document.getElementById('timeout-header').classList.add('hide');
         document.getElementById('period').classList.remove('hide');
     });
+
+
+    const homeLogoForm = document.getElementById('homeLogoForm');
+    const homeFileInput = document.getElementById('homeLogoInput');
+
+    homeLogoForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('homeLogo', homeFileInput.files[0]); // 'uploadedFile' is the name expected by the server
+
+        try {
+            const response = await fetch('/upload-home-logo', { // Replace with your server's upload endpoint
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('File uploaded successfully:', result);
+            } else {
+                console.error('File upload failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during file upload:', error);
+        }
+    });
+
+    const awayLogoForm = document.getElementById('awayLogoForm');
+    const awayFileInput = document.getElementById('awayLogoInput');
+
+    awayLogoForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+        formData.append('awayLogo', awayFileInput.files[0]); // 'uploadedFile' is the name expected by the server
+
+        try {
+            const response = await fetch('/upload-away-logo', { // Replace with your server's upload endpoint
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('File uploaded successfully:', result);
+            } else {
+                console.error('File upload failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during file upload:', error);
+        }
+    });
 });

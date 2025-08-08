@@ -557,6 +557,20 @@ $(document).ready(function() {
         currentFixture.awayName = name;
     });
 
+    socket.on('changehomelogo', function(data) {
+        const imgElement = document.getElementById('homeLogo1');
+        if (imgElement) {
+            imgElement.src = `${data.url}?random=${+new Date().getTime()}`; // Update the image source
+        }
+    });
+
+    socket.on('changeawaylogo', function(data) {
+        const imgElement = document.getElementById('awayLogo2');
+        if (imgElement) {
+            imgElement.src = `${data.url}?random=${+new Date().getTime()}`; // Update the image source
+        }
+    });
+
     function roundDecimal(number, decimalPlaces) {
         return Number(Math.round(number + "e" + decimalPlaces) + "e-" + decimalPlaces);
     }

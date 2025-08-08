@@ -44,9 +44,9 @@ cursorB = db.cursor()
 
 fixture_queue_B = load_default_fixture_queue()
 
-def render_squadi_timer():
-    fixtures = fetch_fixtures_json()
-    return render_template('squadi-timer.html')
+# def render_squadi_timer():
+#     fixtures = fetch_fixtures_json()
+#     return render_template('squadi-timer.html')
 
 
 """
@@ -134,6 +134,33 @@ def render_extended_controller(fixture_queue: FixtureQueue):
                             homeAbbrev = fixture_queue.get_current_fixture().get_home_team().get_abbreviation(),
                             awayAbbrev = fixture_queue.get_current_fixture().get_away_team().get_abbreviation()
     )
+
+@app.route('/upload-home-logo', methods=['POST'])
+def upload_home_logo():
+    if 'homeLogo' in request.files:
+        home_logo = request.files['homeLogo']
+        if home_logo.filename != '':
+            home_logo.save(f'static/img/{fixture_queue_B.get_current_fixture().get_home_team().get_name()}-logo.png')
+            fixture_queue_B.get_current_fixture().get_home_team().set_logo(f'{fixture_queue_B.get_current_fixture().get_home_team().get_name()}-logo')
+
+            # Update the home logo in the scoreboard
+            socketio.emit('changehomelogo', {'url': f'/static/img/{fixture_queue_B.get_current_fixture().get_home_team().get_name()}-logo.png'}, namespace="/courtB")
+    
+    return ""
+
+
+@app.route('/upload-away-logo', methods=['POST'])
+def upload_away_logo():
+    if 'awayLogo' in request.files:
+        away_logo = request.files['awayLogo']
+        if away_logo.filename != '':
+            away_logo.save(f'static/img/{fixture_queue_B.get_current_fixture().get_away_team().get_name()}-logo.png')
+            fixture_queue_B.get_current_fixture().get_away_team().set_logo(f'{fixture_queue_B.get_current_fixture().get_away_team().get_name()}-logo')
+
+            # Update the away logo in the scoreboard
+            socketio.emit('changeawaylogo', {'url': f'/static/img/{fixture_queue_B.get_current_fixture().get_away_team().get_name()}-logo.png'}, namespace="/courtB")
+
+    return ""
 
 # @app.route('/extendedRemoteB', methods=['POST'])
 # def upload_logos():
