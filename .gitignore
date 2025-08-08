@@ -119,6 +119,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+myenv
 
 # Spyder project settings
 .spyderproject
@@ -157,3 +158,5 @@ model/__pycache__/
 static/img/*
 
 ipswich_futsal_fixtures.sql
+data
+install.bat
