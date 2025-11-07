@@ -15,6 +15,7 @@ $(document).ready(function(){
     var awayAbbreviationInput = document.getElementById('awayAbbreviationInput');
     var homeColourInput = document.getElementById('homeColourInput');
     var awayColourInput = document.getElementById('awayColourInput');
+    var controlsEnabled = true;
 
     socket = io.connect(`http://${location.host}/extendedRemoteB`);
 
@@ -82,11 +83,13 @@ $(document).ready(function(){
     }
 
     document.getElementById('pausePlay').addEventListener('click', ()=> {
-        pausePlay();
+        if (controlsEnabled) {
+            pausePlay();
+        }
     });
 
     document.addEventListener('keyup', event => {
-        if (event.code === 'Space') {
+        if (controlsEnabled && event.code === 'Space') {
             pausePlay();
         }
     });
@@ -152,9 +155,29 @@ $(document).ready(function(){
         }
     });
 
+    socket.on('newfixture', function(new_fixture) {
+        console.log('New fixture received:', new_fixture);
+        $('.homeName').text(new_fixture.homeName);
+        $('.awayName').text(new_fixture.awayName);
+        $('.homeAbbreviation').text(`(${new_fixture.homeAbbrev})`);
+        $('.awayAbbreviation').text(`(${new_fixture.awayAbbrev})`);
+        $('#period').text("Pre game");
+        $('#homeGoals').text(0);
+        $('#awayGoals').text(0);
+        $('#homeFouls').text(0);
+        $('#awayFouls').text(0);
+        homeColourInput.value = new_fixture.homeColour;
+        awayColourInput.value = new_fixture.awayColour;
+        if (new_fixture.competition == "Summer Season 2025/26 - Phase 1") {
+            controlsEnabled = false;
+        } else {
+            controlsEnabled = true;
+        }
+    });
+
     document.getElementById('editHomeNameButton').addEventListener('click', ()=> {
         //var bringForwardConfirm = confirm("Are you sure you want to advance/shorten the current period?")
-        if (homeNameInput.value != null) {
+        if (homeNameInput.value != null && controlsEnabled) {
             socket.emit('changehomename', homeNameInput.value);
         }
     });
@@ -176,38 +199,38 @@ $(document).ready(function(){
     });
 
     document.getElementById('editAwayNameButton').addEventListener('click', ()=> {
-        if (awayNameInput.value != null) {
+        if (controlsEnabled && awayNameInput.value != null) {
             socket.emit('changeawayname', awayNameInput.value);
         }
     });
 
     document.getElementById('editHomeAbbreviationButton').addEventListener('click', ()=> {
-        if (homeAbbreviationInput.value != null) {
+        if (controlsEnabled && homeAbbreviationInput.value != null) {
             socket.emit('changehomeabbrev', homeAbbreviationInput.value);
         }
     });
 
     document.getElementById('editAwayAbbreviationButton').addEventListener('click', ()=> {
-        if (awayAbbreviationInput.value != null) {
+        if (controlsEnabled && awayAbbreviationInput.value != null) {
             socket.emit('changeawayabbrev', awayAbbreviationInput.value);
         }
     });
 
     document.getElementById('editHomeColourButton').addEventListener('click', ()=> {
-        if (homeColourInput.value != null) {
+        if (controlsEnabled && homeColourInput.value != null) {
             socket.emit('changehomecolour', homeColourInput.value);
         }
     });
 
     document.getElementById('editAwayColourButton').addEventListener('click', ()=> {
-        if (awayColourInput.value != null) {
+        if (controlsEnabled && awayColourInput.value != null) {
             socket.emit('changeawaycolour', awayColourInput.value);
         }
     });
 
     document.getElementById('addTime').addEventListener('click', ()=> {
         var delayConfirm = confirm("Are you sure you want to add time to the current period?");
-        if (delayConfirm && delayTime.value != null && delayUnit.value != null) {
+        if (controlsEnabled && delayConfirm && delayTime.value != null && delayUnit.value != null) {
             time = parseInt(delayTime.value) * units[delayUnit.value];
             socket.emit('delay', time);
         }
@@ -215,7 +238,7 @@ $(document).ready(function(){
 
     document.getElementById('takeTime').addEventListener('click', ()=> {
         var bringForwardConfirm = confirm("Are you sure you want to advance/shorten the current period?")
-        if (bringForwardConfirm && forwardTime.value != null && forwardUnit.value != null) {
+        if (controlsEnabled && bringForwardConfirm && forwardTime.value != null && forwardUnit.value != null) {
             time = parseInt(forwardTime.value) * units[forwardUnit.value];
             socket.emit('bringforward', time);
         }
@@ -223,59 +246,54 @@ $(document).ready(function(){
     
     document.getElementById('restartGame').addEventListener('click', ()=> {
         var restartConfirm = confirm("Are you sure you want to restart the game? The timer, scores and fouls will be reset.")
-        if (restartConfirm) {
+        if (controlsEnabled && restartConfirm) {
             socket.emit('restartgame');
         }
     });
 
     document.getElementById('restartPeriod').addEventListener('click', ()=> {
         var restartConfirm = confirm("Are you sure you want to restart the current period? The timer will be reset.")
-        if (restartConfirm) {
+        if (controlsEnabled && restartConfirm) {
             socket.emit('restartperiod');
         }
     });
 
     document.getElementById('previousPeriod').addEventListener('click', ()=> {
         var restartConfirm = confirm("Are you sure you want to move to the previous period? The period will be changed and the timer will be reset.")
-        if (restartConfirm) {
+        if (controlsEnabled && restartConfirm) {
             socket.emit('previousperiod');
         }
     });
 
     document.getElementById('nextPeriod').addEventListener('click', ()=> {
         var restartConfirm = confirm("Are you sure you want to move to the next period? The period will be changed and the timer will be reset.")
-        if (restartConfirm) {
+        if (controlsEnabled && restartConfirm) {
             socket.emit('nextperiod');
         }
     });
 
     document.getElementById('previousGame').addEventListener('click', ()=> {
         var next = confirm("Are you sure you want to move to the previous game?");
-        if (next) {
-            socket.emit('startpreviousgame');
-        }
-    });
-
-    document.getElementById('nextGame').addEventListener('click', ()=> {
-        var next = confirm("Are you sure you want to move to the next game?");
-        if (next) {
-            socket.emit('startnextgame');
+        if (controlsEnabled && next) {
+            socket.emit('previousgame');
         }
     });
 
     document.getElementById('timeout').addEventListener('click', ()=> {
-        if (timeout) {
-            socket.emit('canceltimeout');
-            timeout = false;
-            document.getElementById('timeout').textContent = "Timeout (1:00)";
-            document.getElementById('timeout-header').classList.add('hide');
-            document.getElementById('period').classList.remove('hide');
-        } else {
-            socket.emit('timeout');
-            timeout = true;
-            document.getElementById('timeout').textContent = "Cancel Timeout";
-            document.getElementById('period').classList.add('hide');
-            document.getElementById('timeout-header').classList.remove('hide');
+        if (controlsEnabled) {
+            if (timeout) {
+                socket.emit('canceltimeout');
+                timeout = false;
+                document.getElementById('timeout').textContent = "Timeout (1:00)";
+                document.getElementById('timeout-header').classList.add('hide');
+                document.getElementById('period').classList.remove('hide');
+            } else {
+                socket.emit('timeout');
+                timeout = true;
+                document.getElementById('timeout').textContent = "Cancel Timeout";
+                document.getElementById('period').classList.add('hide');
+                document.getElementById('timeout-header').classList.remove('hide');
+            }
         }
     });
 

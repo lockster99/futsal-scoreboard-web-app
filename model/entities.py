@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+from model.functions import fetch_fixtures_json, filter_fixtures_json_by_court, get_team_logos_from_squadi, download_image
 
 second = 1000
 minute = 60*second
@@ -478,7 +479,16 @@ class FixtureQueue(object):
         return self._fixtures[self._current]
 
     def next_fixture(self):
-        self._current += 1
+        if self._current < len(self._fixtures)-1:
+            self._current += 1
+            return True
+        return False
+
+    def previous_fixture(self):
+        if self._current > 0:
+            self._current -= 1
+            return True
+        return False
 
     def remaining_fixtures(self):
         return self._fixtures[self._current:]
@@ -521,18 +531,78 @@ class FixtureQueue(object):
         self._alonetimer_connected = connected
 
 
-def load_default_fixture_queue():
-    pre_game = Period(0, "Pre game", "Pre game", None, "", True, True, False, False, False, True, True, False, False, False, False, 0)
-    first_half = Period(1, "First half", "First half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 1)
-    half_time = Period(2, "Half time", "Half time", 8*minute, "", True, True, False, False, False, False, False, False, False, False, False, 2)
-    second_half = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
-    full_time = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
-    periods = [pre_game, first_half, half_time, second_half, full_time]
-    period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
-    home_team = Team(1, 1, "Ipswich Futsal", "green", "IPS", "ipswich-futsal-rgb")
-    away_team = Team(2, 1, "Elitefoot FC", "white", "ELF", "elitefoot")
-    competition = Competition(1, "2025", "F-League", False, True, True)
-    fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
-                      datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
-    fixture_queue = FixtureQueue([fixture])
+
+
+COMMUNITY_PRE_GAME = Period(0, "Pre game", "Pre game", None, "", True, False, False, False, False, True, True, False, False, False, False, 0)
+COMMUNITY_FIRST_HALF = Period(1, "First half", "First half", 13*minute, "", True, False, False, True, True, True, True, False, True, False, False, 1)
+COMMUNITY_HALF_TIME = Period(2, "Half time", "Half time", 2*minute, "", True, False, False, False, False, False, True, False, False, False, False, 2)
+COMMUNITY_SECOND_HALF = Period(3, "Second half", "Second half", 13*minute, "", True, False, False, True, True, True, True, False, True, False, False, 3)
+COMMUNITY_FULL_TIME = Period(4, "Full time", "Full time", 15*second, "", True, False, False, False, False, False, False, False, False, False, False, 4)
+COMMUNITY_PERIODS = [COMMUNITY_PRE_GAME, COMMUNITY_FIRST_HALF, COMMUNITY_HALF_TIME, COMMUNITY_SECOND_HALF, COMMUNITY_FULL_TIME]
+COMMUNITY_PERIOD_CONFIGURATION = PeriodConfiguration(2, "Community Standard", "Normal", 1*minute, "Standard Community period configuration", COMMUNITY_PERIODS)
+
+
+F_LEAGUE_PRE_GAME = Period(0, "Pre game", "Pre game", None, "", True, True, False, False, False, True, True, False, False, False, False, 0)
+F_LEAGUE_FIRST_HALF = Period(1, "First half", "First half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 1)
+F_LEAGUE_HALF_TIME = Period(2, "Half time", "Half time", 8*minute, "", True, True, False, False, False, False, False, False, False, False, False, 2)
+F_LEAGUE_SECOND_HALF = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
+F_LEAGUE_FULL_TIME = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
+F_LEAGUE_PERIODS = [F_LEAGUE_PRE_GAME, F_LEAGUE_FIRST_HALF, F_LEAGUE_HALF_TIME, F_LEAGUE_SECOND_HALF, F_LEAGUE_FULL_TIME]
+F_LEAGUE_PERIOD_CONFIGURATION = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", F_LEAGUE_PERIODS)
+
+
+def get_logo_name(team_name: str, team_logos: set):
+    if team_name in team_logos:
+        return f"{team_name}-logo"
+    return "ipswich-futsal-rgb"
+
+def fix_fleague_team_name(team_name: str):
+    team_names = {
+        "Ipswich Futsal Club": "Ipswich Futsal",
+        "Brisbane EliteFoot Futsal Club": "EliteFoot FC",
+        "Sala Time Futsal Club": "Sala Time",
+        "South Brisbane Fury Futsal Club": "SB Fury",
+        "Crusaders Futsal Club": "Crusaders FC",
+        "River City Futsal Club": "River City",
+        "Sunshine Coast Wave Futsal Club": "SC Wave",
+        "Gold Coast Galaxy Futsal Club": "GC Galaxy"}
+    if team_name in team_names:
+        return team_names[team_name]
+    return team_name
+
+def load_default_fixture_queue(court_number: int):
+    squadi_fixtures_json = filter_fixtures_json_by_court(fetch_fixtures_json(), court_number=court_number)
+    community_logos = get_team_logos_from_squadi()
+    team_logos = community_logos | get_team_logos_from_squadi(competition_id=1096)
+    fixture_queue_list = list()
+    for fixture in squadi_fixtures_json['matches']:
+        home_team = Team(fixture['team1']['id'], 1, fix_fleague_team_name(fixture['team1']['name']), "green", f"{fixture['team1']['name'][:3]}".upper(), get_logo_name(fixture['team1']['name'], team_logos))
+        away_team = Team(fixture['team2']['id'], 1, fix_fleague_team_name(fixture['team2']['name']), "white", f"{fixture['team2']['name'][:3]}".upper(), get_logo_name(fixture['team2']['name'], team_logos))
+        competition = Competition(fixture['competition']['id'], "2025", fixture['competition']['name'], False, True, True)
+        period_configuration = COMMUNITY_PERIOD_CONFIGURATION
+        if competition.get_name() == "F-League 2025":
+            period_configuration = F_LEAGUE_PERIOD_CONFIGURATION
+        fixture_obj = Fixture(fixture['id'], competition, "Normal round", fixture['round'], home_team, 0, 0, away_team,
+                            datetime.fromisoformat(fixture['startTime'].replace("Z", "+00:00")), "Court B", 0, 0, period_configuration)
+        fixture_queue_list.append(fixture_obj)
+    # sort fixture queue list by match start time
+    fixture_queue_list.sort(key=lambda x: x.get_datetime())
+    fixture_queue = FixtureQueue(fixture_queue_list)
     return fixture_queue
+
+    # pre_game = Period(0, "Pre game", "Pre game", None, "", True, True, False, False, False, True, True, False, False, False, False, 0)
+    # first_half = Period(1, "First half", "First half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 1)
+    # half_time = Period(2, "Half time", "Half time", 8*minute, "", True, True, False, False, False, False, False, False, False, False, False, 2)
+    # second_half = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
+    # full_time = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
+    # periods = [pre_game, first_half, half_time, second_half, full_time]
+    # period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
+    # home_team = Team(1, 1, "Ipswich Futsal", "green", "IPS", "ipswich-futsal-rgb")
+    # away_team = Team(2, 1, "Elitefoot FC", "white", "ELF", "Elitefoot FC")
+    # competition = Competition(1, "2025", "F-League", False, True, True)
+    # fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
+    #                   datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
+    # fixture_queue = FixtureQueue([fixture])
+    # return fixture_queue
+
+

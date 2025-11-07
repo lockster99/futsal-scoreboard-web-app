@@ -42,7 +42,9 @@ cursorB = db.cursor()
 #         except:
 #             pass
 
-fixture_queue_B = load_default_fixture_queue()
+court_number = 2
+
+fixture_queue_B = load_default_fixture_queue(court_number)
 
 # def render_squadi_timer():
 #     fixtures = fetch_fixtures_json()
@@ -212,6 +214,7 @@ def handle_connection_remoteB():
     print('remote B connected')
     socketio.emit('getpausestatus', namespace="/courtB")
     socketio.emit('extendedremoteconnected', namespace="/courtB")
+    socketio.emit('newfixture', fixture_queue_B.get_current_fixture().get_json(), namespace="/extendedRemoteB")
 
 @socketio.on('connect', namespace="/homescoreB")
 def handle_connect_homescore_B():
@@ -266,19 +269,19 @@ def timer_alone_B(timer):
     socketio.emit('alonetimer', timer, namespace="/alonetimerB")
 
 def new_fixture_slaves(fixture_queue: FixtureQueue, new_fixture, crt):
-    fixture_queue.next_fixture()
-    #socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
-    #socketio.emit('nextfixture', new_fixture, namespace=f"/court{crt}copy") 
-    socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
-    socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
-    socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
-    # socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
-    # socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
-    # socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
+    completed_new_fixture = fixture_queue.next_fixture()
+    if completed_new_fixture:
+        #socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
+        #socketio.emit('nextfixture', new_fixture, namespace=f"/court{crt}copy") 
+        socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
+        socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
+        socketio.emit('nextfixture', namespace=f"/awayscore{crt}") 
+        #socketio.emit('nextfixture', namespace=f"/extendedRemote{crt}")
 
 @socketio.on('newfixture', namespace="/courtB")
 def new_fixture_ticker_B(new_fixture):
     new_fixture_slaves(fixture_queue_B, new_fixture, "B")
+    socketio.emit('newfixture', new_fixture, namespace="/extendedRemoteB")
 
 # @socketio.on('firstfixture', namespace="/courtB")
 # def first_fixture_copy_B(current_fixture):

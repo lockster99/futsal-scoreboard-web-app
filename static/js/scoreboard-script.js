@@ -405,42 +405,42 @@ $(document).ready(function() {
         requestAnimationFrame(timer);
     });
 
-    // socket.on('previousgame',()=> {
-    //     if (current > 0) {
-    //         current--;
-    //         if (currentFixture.wentPenalties) {
-    //             cleanUpPenalties();
-    //         }
-    //         fixtureQueue[current] = currentFixture;
-    //         currentFixture = fixtureQueue[current];
-    //         periodConfiguration = currentFixture.periodConfiguration;
-    //         period = 0;
-    //         currentPeriod = periodConfiguration.periods[period];
-    //         targetTime = getTargetTime();
-    //         prevEndTime = 0;
-    //         resetFouls();
-    //         $("#homeName").text(currentFixture.homeName);
-    //         $("#awayName").text(currentFixture.awayName);
-    //         $("#homeNamePenalties").text(currentFixture.homeName);
-    //         $("#awayNamePenalties").text(currentFixture.awayName);
-    //         updateHomeGoals(-currentFixture.homeGoals);
-    //         updateAwayGoals(-currentFixture.awayGoals);
-    //         updateHomeFouls(-currentFixture.homeFouls);
-    //         updateAwayFouls(-currentFixture.awayFouls);
-    //         $("#homeGoals").text(0);
-    //         $("#awayGoals").text(0);
-    //         $("#homeFouls").text(0);
-    //         $("#awayFouls").text(0);
-    //         $("#period").text(currentPeriod.displayName);
-    //         //socket.emit('newfixture', currentFixture);
-    //         updateShownContent();
-    //         periodManualStarted = false;
-    //         if (stop && currentPeriod.autoStart) {
-    //             stop = false;
-    //             requestAnimationFrame(timer);
-    //         }
-    //     }
-    // });
+    socket.on('previousgame',()=> {
+        if (current > 0) {
+            current--;
+            if (currentFixture.wentPenalties) {
+                cleanUpPenalties();
+            }
+            //fixtureQueue[current] = currentFixture;
+            currentFixture = fixtureQueue[current];
+            periodConfiguration = currentFixture.periodConfiguration;
+            period = 0;
+            currentPeriod = periodConfiguration.periods[period];
+            targetTime = getTargetTime();
+            prevEndTime = 0;
+            resetFouls();
+            $("#homeName").text(currentFixture.homeName);
+            $("#awayName").text(currentFixture.awayName);
+            $("#homeNamePenalties").text(currentFixture.homeName);
+            $("#awayNamePenalties").text(currentFixture.awayName);
+            updateHomeGoals(-currentFixture.homeGoals);
+            updateAwayGoals(-currentFixture.awayGoals);
+            updateHomeFouls(-currentFixture.homeFouls);
+            updateAwayFouls(-currentFixture.awayFouls);
+            $("#homeGoals").text(0);
+            $("#awayGoals").text(0);
+            $("#homeFouls").text(0);
+            $("#awayFouls").text(0);
+            $("#period").text(currentPeriod.displayName);
+            //socket.emit('newfixture', currentFixture);
+            updateShownContent();
+            periodManualStarted = false;
+            if (stop && currentPeriod.autoStart) {
+                stop = false;
+                requestAnimationFrame(timer);
+            }
+        }
+    });
 
     socket.on('homegoaladd', () => {
         handleHomeGoalAdd();
@@ -491,8 +491,10 @@ $(document).ready(function() {
     });
 
     socket.on('pause', ()=> {
-        paused = true;
-        socket.emit('pausestatus', true);
+        if (currentPeriod.canPause) {
+            paused = true;
+            socket.emit('pausestatus', true);
+        }
     });
 
     socket.on('resume', ()=> {
@@ -645,7 +647,7 @@ $(document).ready(function() {
         if (currentPeriod.displayName === "Pre game") {
             targetTime = getTargetTime();
         } else {
-            targetTime = targetTime + currentPeriod.periodLength;
+            targetTime = Date.now() + currentPeriod.periodLength;
         }
         
         // If the timer is not to automatically start for the new period
