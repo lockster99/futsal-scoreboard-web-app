@@ -92,6 +92,19 @@ $(document).ready(function() {
                 suddenDeaths.item(i).classList.replace("missed", "untaken");
                 suddenDeaths.item(i).classList.replace("scored", "untaken");
             }
+            for (var i=1; i<6; i++) {
+                if (currentFixture.homePenalties[currentFixture.homePenalties.length - 6 + i] == 1) {
+                    document.getElementById(`homePenalty${i}`).classList.replace("missed", "scored");
+                } else {
+                    document.getElementById(`homePenalty${i}`).classList.replace("scored", "missed");
+                }
+                if (currentFixture.awayPenalties[currentFixture.awayPenalties.length - 6 + i] == 1) {
+                    document.getElementById(`awayPenalty${i}`).classList.replace("missed", "scored");
+                } else {
+                    document.getElementById(`awayPenalty${i}`).classList.replace("scored", "missed");
+                }
+            }
+            
             currentFixture.homePenaltiesLeft = 1;
             currentFixture.awayPenaltiesLeft = 1;
             socket.emit('suddendeath');
@@ -215,11 +228,11 @@ $(document).ready(function() {
             // If paused
             else {
                 // If there's a penalty shootout and it has just been completed
-                if (hasPenaltiesFinished()) {
-                    // End penalties
-                    paused = false;
-                    updatePeriod();
-                }
+                // if (hasPenaltiesFinished()) {
+                //     // End penalties
+                //     paused = false;
+                //     updatePeriod();
+                // }
                 // Extend the target time out by the elapsed time between function calls. Hence the timer will not move while paused.
                 targetTime = targetTime + (timeStamp-previousTimeStamp);
             }
@@ -784,6 +797,12 @@ $(document).ready(function() {
         }
         $("#homeNumberPenalties").text(currentFixture.homePenalties.reduce((a, b) => a + b, 0))
         suddenDeathApplied = false;
+        // If there's a penalty shootout and it has just been completed
+        if (hasPenaltiesFinished()) {
+            // End penalties
+            paused = false;
+            updatePeriod();
+        }
     }
 
     function updateAwayGoals(change) {
@@ -818,6 +837,12 @@ $(document).ready(function() {
         }
         $("#awayNumberPenalties").text(currentFixture.awayPenalties.reduce((a, b) => a + b, 0))
         suddenDeathApplied = false;
+        // If there's a penalty shootout and it has just been completed
+        if (hasPenaltiesFinished()) {
+            // End penalties
+            paused = false;
+            updatePeriod();
+        }
     }
 
     function handleHomeGoalAdd() {

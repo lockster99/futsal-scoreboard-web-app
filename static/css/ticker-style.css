@@ -1,3 +1,5 @@
+@import url('https://googleapis.com');
+
 html, body {
   background-color: transparent;
 }
@@ -5,11 +7,16 @@ html, body {
 .ticker {
   display: flex;
   flex-direction: column;
-  font-size: 12.6vw;
-  font-family: Agency FB;
-  font-weight: bold;
+  font-size: 12vw;
+  font-family: 'Bahnschrift', sans-serif;
+  font-weight: 500;
+  font-stretch: 75%;
+  font-style: normal;
   text-transform: uppercase;
   text-align: center;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   width: 100vw;
 }
 
@@ -33,6 +40,7 @@ html, body {
   color: white;
   background-color: #0D0D0D;
   align-items: center;
+  padding-top: 1.1vw;
 }
 
 .normal-name-width {
@@ -55,7 +63,7 @@ html, body {
   color: white;
   background-color: #106B36;
   height: 15vw;
-  font-size: 10.4vw;
+  font-size: 12vw;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -74,7 +82,7 @@ html, body {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  font-size: 10.4vw;
+  font-size: 12vw;
 }
 
 
@@ -138,4 +146,5 @@ html, body {
   width: 11vw;
   background-color: #006600;
   color: white;
+  padding-top: 1.1vw;
 }

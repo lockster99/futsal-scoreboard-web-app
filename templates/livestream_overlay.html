@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futsal Livestream Overlay</title>
+  <link rel="stylesheet" href="overlay.css" />
+</head>
+<body>
+
+  <!-- ── Overlay canvas ───────────────────────────────────────────────────── -->
+  <div id="app">
+
+    <div id="bg-label">Transparent Overlay — Place over video</div>
+
+    <!-- Scorebug -->
+    <div id="scorebug">
+      <div class="bug-main">
+        <div class="bug-accent bug-accent-home"></div>
+        <div class="bug-team">IPS</div>
+        <div class="bug-score" id="bug-score">0 – 0</div>
+        <div class="bug-team">RIV</div>
+        <div class="bug-accent bug-accent-away"></div>
+      </div>
+      <div class="bug-timer-row">
+        <div class="bug-timer-spacer"></div>
+        <div class="bug-timer-offset"></div>
+        <div class="bug-timer" id="bug-timer">20:00</div>
+      </div>
+    </div>
+
+    <!-- Lineup graphic -->
+    <div class="graphic off-bottom" id="lineup">
+      <div class="lineup-header">
+        <span id="lineup-title">IPS — Starting Lineup</span>
+        <span class="lineup-period">1st Half</span>
+      </div>
+      <div class="lineup-body" id="lineup-body"></div>
+    </div>
+
+    <!-- Sponsor popup -->
+    <div class="graphic off-right" id="sponsor">
+      <div class="sponsor-box">
+        <div class="sponsor-label">Presented by</div>
+        <div class="sponsor-name"    id="sponsor-name">FutsalPro</div>
+        <div class="sponsor-tagline" id="sponsor-tag">Official Equipment Partner</div>
+      </div>
+    </div>
+
+    <!-- Goal notification card -->
+    <div id="goal-notif">
+      <div class="goal-left-bar"></div>
+      <div class="goal-inner">
+        <div class="goal-badge">Goal!</div>
+        <div class="goal-details">
+          <div class="goal-team-label"  id="goal-team-label">IPS</div>
+          <div class="goal-scorer-name" id="goal-scorer">Oliveira</div>
+        </div>
+        <div class="goal-divider"></div>
+        <div class="goal-right">
+          <div class="goal-score-label">Score</div>
+          <div class="goal-score-val" id="goal-score-val">1 – 0</div>
+        </div>
+      </div>
+      <div class="goal-right-bar"></div>
+    </div>
+
+    <!-- Scene banner (pre-game / full-time) -->
+    <div class="graphic off-top" id="scene-banner">
+      <div class="scene-title"   id="scene-title-text">Pre-Match</div>
+      <div class="scene-divider"></div>
+      <div class="scene-sub"     id="scene-sub-text">IPS vs RIV</div>
+    </div>
+
+    <!-- Half-time stats panel -->
+    <div class="graphic off-bottom" id="ht-stats">
+      <div class="ht-header">Half Time</div>
+      <div class="ht-row">
+        <span class="ht-val">8</span>
+        <span class="ht-stat">Shots</span>
+        <span class="ht-val" style="text-align:right">5</span>
+      </div>
+      <div class="ht-row">
+        <span class="ht-val">3</span>
+        <span class="ht-stat">Fouls</span>
+        <span class="ht-val" style="text-align:right">4</span>
+      </div>
+      <div class="ht-row">
+        <span class="ht-val">58%</span>
+        <span class="ht-stat">Possession</span>
+        <span class="ht-val" style="text-align:right">42%</span>
+      </div>
+      <div class="ht-row">
+        <span class="ht-val">2</span>
+        <span class="ht-stat">Corners</span>
+        <span class="ht-val" style="text-align:right">1</span>
+      </div>
+    </div>
+
+  </div><!-- end #app -->
+
+
+  <!-- ── Control panel ────────────────────────────────────────────────────── -->
+  <div id="controls">
+
+    <span class="ctrl-label">Scene</span>
+    <div class="ctrl-group">
+      <button class="btn active" id="btn-pregame"  onclick="setScene('pregame')">Pre-Game</button>
+      <button class="btn"        id="btn-ingame"   onclick="setScene('ingame')">In Game</button>
+      <button class="btn"        id="btn-halftime" onclick="setScene('halftime')">Half Time</button>
+      <button class="btn"        id="btn-fulltime" onclick="setScene('fulltime')">Full Time</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <span class="ctrl-label">Timer</span>
+    <div class="ctrl-group">
+      <button class="btn" onclick="startTimer()">▶ Start</button>
+      <button class="btn" onclick="pauseTimer()">⏸ Pause</button>
+      <button class="btn" onclick="resetTimer()">↺ Reset</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <span class="ctrl-label">Goals</span>
+    <div class="ctrl-group">
+      <button class="btn goal-btn" onclick="scoreGoal('home')">⚽ IPS</button>
+      <button class="btn goal-btn" onclick="scoreGoal('away')">⚽ RIV</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <span class="ctrl-label">Graphics</span>
+    <div class="ctrl-group">
+      <button class="btn" id="btn-lineup-h" onclick="toggleLineup('home')">Lineup IPS</button>
+      <button class="btn" id="btn-lineup-a" onclick="toggleLineup('away')">Lineup RIV</button>
+      <button class="btn" id="btn-sponsor"  onclick="toggleSponsor()">Sponsor</button>
+    </div>
+
+  </div><!-- end #controls -->
+
+  <script src="overlay.js"></script>
+</body>
+</html>

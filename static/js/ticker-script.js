@@ -112,6 +112,18 @@ $(document).ready(function(){
             suddenDeaths.item(i).classList.replace("missed", "untaken");
             suddenDeaths.item(i).classList.replace("scored", "untaken");
         }
+        for (var i=1; i<6; i++) {
+            if (currentFixture.homePenalties[currentFixture.homePenalties.length - 6 + i] == 1) {
+                document.getElementById(`homePenalty${i}`).classList.replace("missed", "scored");
+            } else {
+                document.getElementById(`homePenalty${i}`).classList.replace("scored", "missed");
+            }
+            if (currentFixture.awayPenalties[currentFixture.awayPenalties.length - 6 + i] == 1) {
+                document.getElementById(`awayPenalty${i}`).classList.replace("missed", "scored");
+            } else {
+                document.getElementById(`awayPenalty${i}`).classList.replace("scored", "missed");
+            }
+        }
         wentSuddenDeath = true;
     });
 

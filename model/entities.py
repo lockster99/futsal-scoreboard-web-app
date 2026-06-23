@@ -571,38 +571,225 @@ def fix_fleague_team_name(team_name: str):
     return team_name
 
 def load_default_fixture_queue(court_number: int):
-    squadi_fixtures_json = filter_fixtures_json_by_court(fetch_fixtures_json(), court_number=court_number)
-    community_logos = get_team_logos_from_squadi()
-    team_logos = community_logos | get_team_logos_from_squadi(competition_id=1096)
-    fixture_queue_list = list()
-    for fixture in squadi_fixtures_json['matches']:
-        home_team = Team(fixture['team1']['id'], 1, fix_fleague_team_name(fixture['team1']['name']), "green", f"{fixture['team1']['name'][:3]}".upper(), get_logo_name(fixture['team1']['name'], team_logos))
-        away_team = Team(fixture['team2']['id'], 1, fix_fleague_team_name(fixture['team2']['name']), "white", f"{fixture['team2']['name'][:3]}".upper(), get_logo_name(fixture['team2']['name'], team_logos))
-        competition = Competition(fixture['competition']['id'], "2025", fixture['competition']['name'], False, True, True)
-        period_configuration = COMMUNITY_PERIOD_CONFIGURATION
-        if competition.get_name() == "F-League 2025":
-            period_configuration = F_LEAGUE_PERIOD_CONFIGURATION
-        fixture_obj = Fixture(fixture['id'], competition, "Normal round", fixture['round'], home_team, 0, 0, away_team,
-                            datetime.fromisoformat(fixture['startTime'].replace("Z", "+00:00")), "Court B", 0, 0, period_configuration)
-        fixture_queue_list.append(fixture_obj)
-    # sort fixture queue list by match start time
-    fixture_queue_list.sort(key=lambda x: x.get_datetime())
-    fixture_queue = FixtureQueue(fixture_queue_list)
-    return fixture_queue
-
-    # pre_game = Period(0, "Pre game", "Pre game", None, "", True, True, False, False, False, True, True, False, False, False, False, 0)
-    # first_half = Period(1, "First half", "First half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 1)
-    # half_time = Period(2, "Half time", "Half time", 8*minute, "", True, True, False, False, False, False, False, False, False, False, False, 2)
-    # second_half = Period(3, "Second half", "Second half", 20*minute, "", False, True, False, True, True, True, True, False, True, False, False, 3)
-    # full_time = Period(4, "Full time", "Full time", 5*minute, "", True, True, False, False, False, False, False, False, False, False, False, 4)
-    # periods = [pre_game, first_half, half_time, second_half, full_time]
-    # period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
-    # home_team = Team(1, 1, "Ipswich Futsal", "green", "IPS", "ipswich-futsal-rgb")
-    # away_team = Team(2, 1, "Elitefoot FC", "white", "ELF", "Elitefoot FC")
-    # competition = Competition(1, "2025", "F-League", False, True, True)
-    # fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
-    #                   datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
-    # fixture_queue = FixtureQueue([fixture])
-    # return fixture_queue
+    try:
+        squadi_fixtures_json = filter_fixtures_json_by_court(fetch_fixtures_json(), court_number=court_number)
+        community_logos = get_team_logos_from_squadi()
+        team_logos = community_logos | get_team_logos_from_squadi(competition_id=1096)
+        fixture_queue_list = list()
+        for fixture in squadi_fixtures_json['matches']:
+            home_team = Team(fixture['team1']['id'], 1, fix_fleague_team_name(fixture['team1']['name']), "green", f"{fixture['team1']['name'][:3]}".upper(), get_logo_name(fixture['team1']['name'], team_logos))
+            away_team = Team(fixture['team2']['id'], 1, fix_fleague_team_name(fixture['team2']['name']), "white", f"{fixture['team2']['name'][:3]}".upper(), get_logo_name(fixture['team2']['name'], team_logos))
+            competition = Competition(fixture['competition']['id'], "2025", fixture['competition']['name'], False, True, True)
+            period_configuration = COMMUNITY_PERIOD_CONFIGURATION
+            if competition.get_name() == "F-League 2025":
+                period_configuration = F_LEAGUE_PERIOD_CONFIGURATION
+            fixture_obj = Fixture(fixture['id'], competition, "Normal round", fixture['round'], home_team, 0, 0, away_team,
+                                datetime.fromisoformat(fixture['startTime'].replace("Z", "+00:00")), "Court B", 0, 0, period_configuration)
+            fixture_queue_list.append(fixture_obj)
+        # sort fixture queue list by match start time
+        fixture_queue_list.sort(key=lambda x: x.get_datetime())
+        fixture_queue = FixtureQueue(fixture_queue_list)
+        return fixture_queue
+    except Exception as e:
+        pre_game = Period(
+            id=0, 
+            name="Pre game", 
+            display_name="Pre game", 
+            length=None, 
+            description="", 
+            auto_start=True, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=True, 
+            show_time=True, 
+            show_time_zero=False, 
+            show_time_ticker=False, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=0
+        )
+        first_half = Period(
+            id=1, 
+            name="First half", 
+            display_name="First half", 
+            length=20*minute, 
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=True, 
+            last_minute_decimal=True, 
+            reset_fouls=True, 
+            show_time=True, 
+            show_time_zero=False, 
+            show_time_ticker=True, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=1
+        )
+        half_time = Period(
+            id=2, 
+            name="Half time", 
+            display_name="Half time", 
+            length=1*minute, 
+            description="", 
+            auto_start=True, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=False, 
+            show_time=False, 
+            show_time_zero=True, 
+            show_time_ticker=False, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=2
+        )
+        second_half = Period(
+            id=3, 
+            name="Second half", 
+            display_name="Second half", 
+            length=20*minute, 
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=True, 
+            last_minute_decimal=True, 
+            reset_fouls=True, 
+            show_time=True, 
+            show_time_zero=False,
+            show_time_ticker=True,
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=3
+        )
+        normal_full_time = Period(
+            id=4, 
+            name="Normal full time", 
+            display_name="Normal full time", 
+            length=15*second, 
+            description="",
+            auto_start=True, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=False, 
+            show_time=False, 
+            show_time_zero=True, 
+            show_time_ticker=False, 
+            decides_extra_time=True, 
+            decides_penalties=False, 
+            sort_order=4
+        )
+        first_half_extra_time = Period(
+            id=5, 
+            name="First half extra time", 
+            display_name="First half ET", 
+            length=5*minute, 
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=True, 
+            last_minute_decimal=True, 
+            reset_fouls=False, 
+            show_time=True, 
+            show_time_zero=False, 
+            show_time_ticker=True, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=5
+        )
+        second_half_extra_time = Period(
+            id=6, 
+            name="Second half extra time", 
+            display_name="Second half ET", 
+            length=5*minute, 
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=True, 
+            last_minute_decimal=True, 
+            reset_fouls=False, 
+            show_time=True, 
+            show_time_zero=False, 
+            show_time_ticker=True, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=6
+        )
+        full_time_extra_time = Period(
+            id=7, 
+            name="Full time extra time", 
+            display_name="Full time ET", 
+            length=15*second, 
+            description="", 
+            auto_start=True, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=False, 
+            show_time=False, 
+            show_time_zero=True, 
+            show_time_ticker=False, 
+            decides_extra_time=False, 
+            decides_penalties=True, 
+            sort_order=7
+        )
+        penalties = Period(
+            id=8,
+            name="Penalties",
+            display_name="Penalties",
+            length=None,
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=False, 
+            show_time=False, 
+            show_time_zero=False, 
+            show_time_ticker=False, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=8
+        ) 
+        full_time = Period(
+            id=9,
+            name="Full time",
+            display_name="Full time",
+            length=5*minute,
+            description="", 
+            auto_start=False, 
+            can_pause=True, 
+            count_up=False, 
+            end_siren=False, 
+            last_minute_decimal=False, 
+            reset_fouls=False, 
+            show_time=False, 
+            show_time_zero=False, 
+            show_time_ticker=False, 
+            decides_extra_time=False, 
+            decides_penalties=False, 
+            sort_order=9
+        )
+        periods = [pre_game, first_half, half_time, second_half, normal_full_time, first_half_extra_time, second_half_extra_time, full_time_extra_time, penalties, full_time]
+    
+        period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
+        home_team = Team(1, 1, "Sala Time FC", "#7030A0", "SAL", "Sala Time FC")
+        away_team = Team(2, 1, "South Brisbane Fury", "#000000", "SBF", "South Brisbane Fury")
+        competition = Competition(1, "2025", "F-League", False, True, True)
+        fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
+                        datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
+        fixture_queue = FixtureQueue([fixture])
+        return fixture_queue
 
 

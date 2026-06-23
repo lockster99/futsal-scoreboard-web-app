@@ -44,6 +44,7 @@ cursorB = db.cursor()
 
 court_number = 2
 
+
 fixture_queue_B = load_default_fixture_queue(court_number)
 
 # def render_squadi_timer():
@@ -105,9 +106,9 @@ def render_ticker(fixture_queue: FixtureQueue, court):
             awayGoals = fixture_queue.get_current_fixture().get_away_score()
     )
 
-# @app.route('/courtBticker')
-# def courtBticker():
-#     return render_ticker(fixture_queue_B, "B")
+@app.route('/courtBticker')
+def courtBticker():
+    return render_ticker(fixture_queue_B, "B")
 
 @app.route('/remoteB')
 def remoteB():
@@ -201,8 +202,8 @@ def handle_connection_Bcopy():
 def handle_connection_Btick():
     print('ticker B has connected')
     fixture_queue_B.set_ticker_connected(True)
-    socketio.emit('tickerconnected', namespace="/courtB")
-    #socketio.emit('fixturequeue', fixture_queue_B.get_json(), namespace="/courtBticker")
+    socketio.emit('tickerconnected', namespace="/courtB") 
+    socketio.emit('fixturequeue', fixture_queue_B.get_json(), namespace="/courtBticker") 
 
 @socketio.on('connect', namespace="/remoteB")
 def handle_connection_remoteB():
@@ -238,7 +239,7 @@ def handle_connect_homescore_B():
 def handle_connect_homescore_B():
     print('awayscore B connected')
 
-@socketio.on('connect', namespace="/alonetimerB")
+@socketio.on('connect', namespace="/alonetimerB") 
 def handle_connect_alonetimer_B():
     print('alonetimer B connected')
     fixture_queue_B.set_alonetimer_connected(True)
@@ -248,7 +249,7 @@ def handle_connect_alonetimer_B():
 def set_remoteB_pause_status(paused):
     socketio.emit('pausestatus', paused, namespace="/remoteB")
     socketio.emit('pausestatus', paused, namespace="/extendedRemoteB")
-
+ 
 """
 TIMER AND FIXTURE UPDATE EVENTS FOR TICKER AND SCOREBOARD COPY
 """
@@ -271,7 +272,7 @@ def timer_alone_B(timer):
 def new_fixture_slaves(fixture_queue: FixtureQueue, new_fixture, crt):
     completed_new_fixture = fixture_queue.next_fixture()
     if completed_new_fixture:
-        #socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
+        socketio.emit('nextfixture', namespace=f"/court{crt}ticker")
         #socketio.emit('nextfixture', new_fixture, namespace=f"/court{crt}copy") 
         socketio.emit('nextfixture', namespace=f"/alonetimer{crt}") 
         socketio.emit('nextfixture', namespace=f"/homescore{crt}") 
@@ -309,18 +310,18 @@ def handle_score_update(fixture_queue: FixtureQueue, cursor, crt, update):
     if 'homeGoals' in update:
         fixture_queue.get_current_fixture().set_home_score(update['homeGoals'])
         #dbqueue.put((cursor, f"UPDATE fixtures SET home_score = {update['homeGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
+        socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
         #socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}copy")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
-        socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
+        #socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/homescore{crt}")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/extendedRemote{crt}")
     else:
         fixture_queue.get_current_fixture().set_away_score(update['awayGoals'])
         #dbqueue.put((cursor, f"UPDATE fixtures SET away_score = {update['awayGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
+        socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
         #socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}copy")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
-        socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
+        #socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/awayscore{crt}")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/extendedRemote{crt}")
 
 @socketio.on('score', namespace="/courtB")
@@ -345,6 +346,7 @@ def handle_went_penalties(fixture_queue: FixtureQueue, crt):
     fixture_queue.get_current_fixture().set_went_penalties(True)
     socketio.emit("wentpenalties", namespace=f"/court{crt}ticker")
 
+
 @socketio.on('wentpenalties', namespace="/courtB")
 def went_penalties_B():
     handle_went_penalties(fixture_queue_B, "B")
@@ -355,11 +357,14 @@ def handle_penalty_update(fixture_queue: FixtureQueue, cursor, crt, update):
         #dbqueue.put((cursor, f"UPDATE fixtures SET home_penalties = {sum(update['homePenalties'])} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
         fixture_queue.get_current_fixture().set_home_penalties_left(update['homePenaltiesLeft'])
         socketio.emit('homepenaltyupdate', update['homePenalties'], namespace=f"/court{crt}ticker")
+        socketio.emit('homescoreupdate', f"{fixture_queue.get_current_fixture().get_home_score()-sum(update['homePenalties'])} ({sum(update['homePenalties'])})", namespace=f"/homescore{crt}")
+
     else:
         fixture_queue.get_current_fixture().set_away_penalties(update['awayPenalties'])
         #dbqueue.put((cursor, f"UPDATE fixtures SET away_penalties = {sum(update['awayPenalties'])} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
         fixture_queue.get_current_fixture().set_away_penalties_left(update['awayPenaltiesLeft'])
         socketio.emit('awaypenaltyupdate', update['awayPenalties'], namespace=f"/court{crt}ticker")
+        socketio.emit('awayscoreupdate', f"{fixture_queue.get_current_fixture().get_away_score()-sum(update['awayPenalties'])} ({sum(update['awayPenalties'])})", namespace=f"/awayscore{crt}")
 
 @socketio.on('penalty', namespace="/courtB")
 def penalty_B(update):
@@ -382,14 +387,14 @@ def handle_remote_score_update(fixture_queue: FixtureQueue, cursor, crt, update)
         fixture_queue.get_current_fixture().add_home_score(1)
         socketio.emit('homegoaladd', namespace=f"/court{crt}")
         #dbqueue.put((cursor, f"UPDATE fixtures SET home_score = home_score + 1 WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('homegoaladd', namespace=f"/court{crt}ticker")
+        socketio.emit('homegoaladd', namespace=f"/court{crt}ticker")
         #socketio.emit('homegoaladd', namespace=f"/court{crt}copy")
         socketio.emit('homegoaladd', namespace=f"/extendedRemote{crt}")
     elif update == 'awayGoalIncrement':
         fixture_queue.get_current_fixture().add_away_score(1)
         socketio.emit('awaygoaladd', namespace=f"/court{crt}")
         #dbqueue.put((cursor, f"UPDATE fixtures SET away_score = away_score + 1 WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('awaygoaladd', namespace=f"/court{crt}ticker")
+        socketio.emit('awaygoaladd', namespace=f"/court{crt}ticker")
         #socketio.emit('awaygoaladd', namespace=f"/court{crt}copy")
         socketio.emit('awaygoaladd', namespace=f"/extendedRemote{crt}")
     elif update == 'homeGoalDecrement':
@@ -403,21 +408,21 @@ def handle_remote_score_update(fixture_queue: FixtureQueue, cursor, crt, update)
         fixture_queue.get_current_fixture().add_away_score(-1)
         socketio.emit('awaygoaltake', namespace=f"/court{crt}")
         #dbqueue.put((cursor, f"UPDATE fixtures SET away_score = away_score - 1 WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('awaygoaltake', namespace=f"/court{crt}ticker")
+        socketio.emit('awaygoaltake', namespace=f"/court{crt}ticker")
         #socketio.emit('awaygoaltake', namespace=f"/court{crt}copy")
         socketio.emit('awaygoaltake', namespace=f"/extendedRemote{crt}")
     elif 'homeGoals' in update:
         fixture_queue.get_current_fixture().set_home_score(update['homeGoals'])
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}")
         #dbqueue.put((cursor, f"UPDATE fixtures SET home_score = {update['homeGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
+        socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}ticker")
         #socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/court{crt}copy")
         socketio.emit('homescoreupdate', update['homeGoals'], namespace=f"/extendedRemote{crt}")
     elif 'awayGoals' in update:
         fixture_queue.get_current_fixture().set_away_score(update['awayGoals'])
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}")
         #dbqueue.put((cursor, f"UPDATE fixtures SET away_score = {update['awayGoals']} WHERE id = {fixture_queue.get_current_fixture().get_id()}"))
-        #socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
+        socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}ticker")
         #socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/court{crt}copy")
         socketio.emit('awayscoreupdate', update['awayGoals'], namespace=f"/extendedRemote{crt}")
 
@@ -585,13 +590,13 @@ def change_away_name(name):
 @socketio.on('changehomeabbrev', namespace="/extendedRemoteB")
 def change_home_abbrev(abbrev):
     fixture_queue_B.get_current_fixture().get_home_team().set_abbreviation(abbrev)
-    #socketio.emit('changehomeabbrev', abbrev, namespace="/courtBticker")
+    socketio.emit('changehomeabbrev', abbrev, namespace="/courtBticker")
     socketio.emit('changehomeabbrev', abbrev, namespace="/extendedRemoteB")
 
 @socketio.on('changeawayabbrev', namespace="/extendedRemoteB")
 def change_away_abbrev(abbrev):
     fixture_queue_B.get_current_fixture().get_away_team().set_abbreviation(abbrev)
-    #socketio.emit('changeawayabbrev', abbrev, namespace="/courtBticker")
+    socketio.emit('changeawayabbrev', abbrev, namespace="/courtBticker")
     socketio.emit('changeawayabbrev', abbrev, namespace="/extendedRemoteB")
 
 @socketio.on('changehomecolour', namespace="/extendedRemoteB")

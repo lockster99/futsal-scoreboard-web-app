@@ -1,0 +1,415 @@
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial Black', Arial, sans-serif;
+}
+
+body {
+  background: transparent;
+  color: #fff;
+}
+
+
+/* ─── Overlay canvas ─────────────────────────────────────────────────────── */
+
+#app {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 90vh;
+  overflow: hidden;
+  background: transparent;
+}
+
+#bg-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(12px, 2vw, 20px);
+  color: rgba(255, 255, 255, 0.07);
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+
+/* ─── Scorebug ───────────────────────────────────────────────────────────── */
+/*
+ * --row-h drives both rows so they are always identical in height.
+ * Adjust this one variable to resize the entire scorebug.
+ */
+
+#scorebug {
+  position: absolute;
+  top: 3.5%;
+  left: 2%;
+  display: flex;
+  flex-direction: column;
+  --row-h: clamp(16px, 2.6vw, 24px);
+}
+
+.bug-main,
+.bug-timer-row {
+  display: flex;
+  height: var(--row-h);
+}
+
+/* Thin coloured accent bars on each side of the scorebug */
+.bug-accent      { width: 3px; flex-shrink: 0; }
+.bug-accent-home { background: #00cc44; }
+.bug-accent-away { background: #cc2200; }
+
+/* Team name cells */
+.bug-team {
+  background: #1a1a2e;
+  color: #fff;
+  font-size: clamp(7px, 1.1vw, 11px);
+  font-weight: 900;
+  width: clamp(32px, 5.5vw, 52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  flex-shrink: 0;
+}
+
+/* Green score box — fixed width so double digits don't resize it */
+.bug-score {
+  background: #44cc33;
+  color: #111;
+  font-size: clamp(7px, 1.2vw, 11px);
+  font-weight: 900;
+  width: clamp(44px, 7.5vw, 68px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+  letter-spacing: .03em;
+}
+
+/*
+ * Timer row spacers mirror the widths of the accent bar and home team
+ * cell above, so the white timer box sits directly under the score box.
+ */
+.bug-timer-spacer { width: 3px;                       background: transparent; flex-shrink: 0; }
+.bug-timer-offset { width: clamp(32px, 5.5vw, 52px); background: transparent; flex-shrink: 0; }
+
+.bug-timer {
+  background: #fff;
+  color: #111;
+  font-size: clamp(7px, 1.1vw, 10px);
+  font-weight: 900;
+  width: clamp(44px, 7.5vw, 68px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+
+/* ─── Graphic animation base ─────────────────────────────────────────────── */
+/*
+ * All overlay graphics share these classes.
+ * Add .on to show, swap to an .off-* class to dismiss.
+ */
+
+.graphic {
+  position: absolute;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity   0.40s ease;
+}
+
+.off-left   { transform: translateX(-120%); opacity: 0; }
+.off-right  { transform: translateX( 120%); opacity: 0; }
+.off-bottom { transform: translateY( 130%); opacity: 0; }
+.off-top    { transform: translateY(-130%); opacity: 0; }
+.on         { transform: translate(0, 0) scale(1); opacity: 1; }
+
+
+/* ─── Lineup graphic ─────────────────────────────────────────────────────── */
+
+#lineup {
+  /* Centred on screen */
+  top: 50%;
+  left: 50%;
+  width: clamp(280px, 48%, 480px);
+  /* Custom transitions to preserve the centring transform */
+  transition:
+    opacity   0.45s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#lineup.off-bottom { transform: translateX(-50%) translateY( 130%); opacity: 0; }
+#lineup.on         { transform: translateX(-50%) translateY(-50%);  opacity: 1; }
+
+.lineup-header {
+  background: #00cc44;
+  color: #111;
+  font-size: clamp(9px, 1.3vw, 13px);
+  font-weight: 900;
+  padding: clamp(4px, .7vw, 7px) clamp(10px, 1.5vw, 14px);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lineup-period {
+  font-size: clamp(7px, 1vw, 10px);
+  color: rgba(0, 0, 0, 0.55);
+  font-weight: 700;
+}
+
+.lineup-body { background: rgba(8, 8, 18, 0.94); }
+
+/* "Starting Five" / "Substitutes" section dividers */
+.lineup-section-label {
+  font-size: clamp(7px, 1vw, 9px);
+  color: #00cc44;
+  font-weight: 900;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  padding: clamp(3px, .5vw, 5px) clamp(10px, 1.5vw, 14px);
+  background: rgba(0, 204, 68, 0.07);
+  border-left: 3px solid #00cc44;
+}
+
+.lineup-player {
+  display: flex;
+  align-items: center;
+  padding: clamp(3px, .45vw, 5px) clamp(10px, 1.5vw, 14px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+  font-size: clamp(8px, 1.15vw, 11px);
+  gap: 8px;
+}
+
+.lineup-player.sub-player { background: rgba(255, 255, 255, 0.02); }
+
+.lineup-num  { color: #00cc44; font-weight: 900; min-width: 16px; font-size: clamp(9px, 1.3vw, 12px); text-align: right; }
+.lineup-name { color: #fff;    font-weight: 700; letter-spacing: .03em; flex: 1; }
+.lineup-pos  {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: clamp(6px, .95vw, 9px);
+  font-weight: 400;
+  font-family: Arial, sans-serif;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+
+/* ─── Sponsor popup ──────────────────────────────────────────────────────── */
+
+#sponsor {
+  bottom: 8%;
+  right: 2%;
+  width: clamp(140px, 22%, 220px);
+}
+
+.sponsor-box {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 4px;
+  padding: clamp(8px, 1.2vw, 14px);
+  text-align: center;
+  border-top: 3px solid #00cc44;
+}
+
+.sponsor-label   { font-size: clamp(7px, 1vw, 10px);    color: #888; text-transform: uppercase; letter-spacing: .1em; font-family: Arial, sans-serif; font-weight: 400; margin-bottom: 4px; }
+.sponsor-name    { font-size: clamp(13px, 2.2vw, 22px); color: #111; font-weight: 900; }
+.sponsor-tagline { font-size: clamp(6px, .9vw, 9px);    color: #555; font-family: Arial, sans-serif; margin-top: 2px; }
+
+
+/* ─── Goal notification ──────────────────────────────────────────────────── */
+/*
+ * Compact card anchored to the bottom-left corner.
+ * Width is set to auto so it only takes up as much space as its content needs.
+ * Slides up from below the frame on .show.
+ */
+
+#goal-notif {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: inline-flex;   /* shrink-wraps to content width */
+  align-items: stretch;
+  height: clamp(48px, 10%, 82px);
+  pointer-events: none;
+  transition:
+    transform 0.50s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity   0.40s ease;
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+#goal-notif.show { transform: translateY(0); opacity: 1; }
+
+.goal-left-bar  { width: 5px; background: #00cc44; flex-shrink: 0; }
+.goal-right-bar { width: 4px; background: #cc2200; flex-shrink: 0; }
+
+.goal-inner {
+  background: rgba(8, 8, 20, 0.95);
+  border-top: 1px solid rgba(0, 204, 68, 0.4);
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(10px, 1.6vw, 18px);
+  gap: clamp(8px, 1.4vw, 14px);
+}
+
+.goal-badge {
+  background: #00cc44;
+  color: #111;
+  font-size: clamp(10px, 1.8vw, 18px);
+  font-weight: 900;
+  padding: clamp(4px, .6vw, 6px) clamp(7px, 1.2vw, 12px);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.goal-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+}
+
+.goal-team-label  { font-size: clamp(7px, 1vw, 10px);    color: #00cc44; font-weight: 900; letter-spacing: .2em;  text-transform: uppercase; }
+.goal-scorer-name { font-size: clamp(9px, 1.6vw, 16px);  color: #fff;    font-weight: 900; letter-spacing: .03em; text-transform: uppercase; white-space: nowrap; }
+
+.goal-divider {
+  width: 1px;
+  align-self: stretch;
+  margin: clamp(6px, 1vw, 10px) 0;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.goal-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.goal-score-label { font-size: clamp(6px, .9vw, 9px);    color: rgba(255, 255, 255, 0.5); letter-spacing: .15em; text-transform: uppercase; font-weight: 700; font-family: Arial, sans-serif; }
+.goal-score-val   { font-size: clamp(12px, 2.4vw, 24px); color: #fff; font-weight: 900; white-space: nowrap; }
+
+
+/* ─── Scene banner ───────────────────────────────────────────────────────── */
+
+#scene-banner {
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  text-align: center;
+  pointer-events: none;
+  transition:
+    opacity   0.40s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#scene-banner.off-top { transform: translateX(-50%) translateY(-130%); opacity: 0; }
+#scene-banner.on      { transform: translateX(-50%) translateY(-50%);  opacity: 1; }
+
+.scene-title   { font-size: clamp(20px, 5vw, 52px);  font-weight: 900; color: #fff;    text-transform: uppercase; letter-spacing: .1em; line-height: 1.1; }
+.scene-divider { width: 60px; height: 3px; background: #00cc44; margin: 8px auto; }
+.scene-sub     { font-size: clamp(9px, 1.8vw, 18px); font-weight: 700; color: #00cc44; text-transform: uppercase; letter-spacing: .3em; margin-top: 6px; }
+
+
+/* ─── Half-time stats panel ──────────────────────────────────────────────── */
+
+#ht-stats {
+  top: 50%;
+  left: 50%;
+  width: clamp(240px, 50%, 450px);
+  transition:
+    opacity   0.40s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#ht-stats.off-bottom { transform: translateX(-50%) translateY( 130%); opacity: 0; }
+#ht-stats.on         { transform: translateX(-50%) translateY(-50%);  opacity: 1; }
+
+.ht-header {
+  background: #00cc44;
+  color: #111;
+  font-size: clamp(9px, 1.4vw, 14px);
+  font-weight: 900;
+  padding: clamp(5px, .8vw, 8px) clamp(12px, 2vw, 18px);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  text-align: center;
+}
+
+.ht-row {
+  display: flex;
+  align-items: center;
+  background: rgba(8, 8, 18, 0.94);
+  padding: clamp(4px, .6vw, 7px) clamp(10px, 1.5vw, 14px);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.07);
+}
+
+.ht-val  { flex: 1; font-size: clamp(10px, 1.6vw, 16px); font-weight: 900; color: #fff; }
+.ht-val:last-child { text-align: right; }
+.ht-stat { flex: 2; font-size: clamp(7px, 1.1vw, 11px); color: rgba(255, 255, 255, 0.55); text-align: center; text-transform: uppercase; letter-spacing: .07em; font-family: Arial, sans-serif; font-weight: 400; }
+
+
+/* ─── Control panel (sits below the overlay canvas) ─────────────────────── */
+
+#controls {
+  background: #0d0d0d;
+  padding: 8px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+
+.ctrl-group { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+
+.ctrl-label {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding-right: 3px;
+  font-weight: 400;
+}
+
+.btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: 10px;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover           { background: rgba(255, 255, 255, 0.14); }
+.btn.active          { background: #00cc44; color: #111; border-color: #00cc44; }
+.btn.goal-btn        { border-color: #00cc44; }
+.btn.goal-btn:hover  { background: #00cc44; color: #111; }
+
+.divider { width: 1px; height: 18px; background: rgba(255, 255, 255, 0.1); margin: 0 3px; }
