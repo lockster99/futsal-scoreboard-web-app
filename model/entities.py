@@ -763,33 +763,37 @@ def load_default_fixture_queue(court_number: int):
             sort_order=8
         ) 
         full_time = Period(
-            id=9,
+            id=4,
             name="Full time",
             display_name="Full time",
             length=5*minute,
             description="", 
-            auto_start=False, 
+            auto_start=True, 
             can_pause=True, 
             count_up=False, 
             end_siren=False, 
             last_minute_decimal=False, 
             reset_fouls=False, 
             show_time=False, 
-            show_time_zero=False, 
+            show_time_zero=True, 
             show_time_ticker=False, 
             decides_extra_time=False, 
             decides_penalties=False, 
-            sort_order=9
+            sort_order=4
         )
-        periods = [pre_game, first_half, half_time, second_half, normal_full_time, first_half_extra_time, second_half_extra_time, full_time_extra_time, penalties, full_time]
-    
+        #periods = [pre_game, first_half, half_time, second_half, normal_full_time, first_half_extra_time, second_half_extra_time, full_time_extra_time, penalties, full_time]
+        periods = [pre_game, first_half, half_time, second_half, full_time]
+
         period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
-        home_team = Team(1, 1, "Sala Time FC", "#7030A0", "SAL", "Sala Time FC")
-        away_team = Team(2, 1, "South Brisbane Fury", "#000000", "SBF", "South Brisbane Fury")
-        competition = Competition(1, "2025", "F-League", False, True, True)
-        fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
+        home_team = Team(1, 1, "Ipswich Futsal", "#006600", "IPS", "ipswich-futsal-rgb")
+        away_team_1 = Team(2, 1, "Arana United FC", "#ff0000", "ARA", "arana-united-futsal-club-2025")
+        away_team_2 = Team(3, 1, "Gold Coast Force", "#00008B", "FOR", "GC Force transparent")
+        competition = Competition(1, "2026", "F-League", False, True, True)
+        fixture_1 = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team_1,
                         datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
-        fixture_queue = FixtureQueue([fixture])
+        fixture_2 = Fixture(2, competition, "Normal round", 1, home_team, 0, 0, away_team_2,
+                datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
+        fixture_queue = FixtureQueue([fixture_1, fixture_2])
         return fixture_queue
 
 
