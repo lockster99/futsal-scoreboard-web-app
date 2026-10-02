@@ -785,8 +785,8 @@ def load_default_fixture_queue(court_number: int):
         periods = [pre_game, first_half, half_time, second_half, full_time]
 
         period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
-        home_team = Team(1, 1, "Ipswich Futsal", "#006600", "IPS", "ipswich-futsal-rgb")
-        away_team = Team(2, 1, "Crusaders FC", "#ffff00", "CRU", "Gold Coast Crusaders Logo Cropped")
+        home_team = Team(1, 1, "HOME", "#39832E", "HOM", "State Titles Logo")
+        away_team = Team(2, 1, "AWAY", "#800000", "AWA", "Pitch 1")
         competition = Competition(1, "2026", "F-League", False, True, True)
         fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
                         datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
