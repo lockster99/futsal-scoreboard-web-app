@@ -1,18 +1,17 @@
 html, body {
   background-color: transparent;
   display: flex;
-  font-family: "bahnschrift", sans-serif;
-  font-weight: 600;
+  font-family: impact;
+  /*font-weight: 600;
   font-stretch: 75%;
-  font-style: normal;
+  font-style: normal;*/
   font-size: 50vh;
-  /*font-weight: 500;*/
-  color: #001147;
-  text-transform: uppercase;
-  text-align: center;
+  color: white;
+  /*text-transform: uppercase;
+  text-align: center;*/
   align-items: center;
   justify-content: center;
-  line-height: 1;
+  /*line-height: 1;*/
 }
 
 #timer {

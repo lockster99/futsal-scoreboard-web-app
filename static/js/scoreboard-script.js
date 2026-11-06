@@ -62,7 +62,9 @@ $(document).ready(function() {
         $("#homeFouls").text(currentFixture.homeFouls);
         $("#awayFouls").text(currentFixture.awayFouls);
         updateShownContent();
-        targetTime = new Date(currentFixture.gameTime).getTime();
+        if (currentPeriod.displayName == "Pre game") {
+            targetTime = new Date(currentFixture.gameTime).getTime();
+        } 
         loaded = true;
     });
 
@@ -70,7 +72,11 @@ $(document).ready(function() {
 
     function checkLoaded() {
         if (loaded) {
-            requestAnimationFrame(timer);
+            if (currentPeriod.displayName == "Pre game") {
+                requestAnimationFrame(timer);
+            } else {
+                updateTimer(currentPeriod.periodLength/1000);
+            }
         } else {
             setTimeout(checkLoaded, 100);
         }

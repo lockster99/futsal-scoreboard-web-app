@@ -784,13 +784,23 @@ def load_default_fixture_queue(court_number: int):
         #periods = [pre_game, first_half, half_time, second_half, normal_full_time, first_half_extra_time, second_half_extra_time, full_time_extra_time, penalties, full_time]
         periods = [pre_game, first_half, half_time, second_half, full_time]
 
-        period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 1*minute, "Standard F-League period configuration", periods)
-        home_team = Team(1, 1, "HOME", "#39832E", "HOM", "State Titles Logo")
-        away_team = Team(2, 1, "AWAY", "#800000", "AWA", "Pitch 1")
+        period_configuration = PeriodConfiguration(1, "F-League Standard", "Normal", 5*second, "Standard F-League period configuration", periods)
+        home_team_1 = Team(1, 1, "River City Futsal", "#800000", "RIV", "River City")
+        away_team_1 = Team(2, 1, "Ipswich Futsal", "#39832E", "IPS", "Ipswich Futsal")
+        home_team_2 = Team(1, 1, "Braza Futsal", "#800000", "BRA", "Braza")
+        away_team_2 = Team(2, 1, "South Brisbane Fury", "#39832E", "SBF", "South Brisbane")
+        home_team_3 = Team(1, 1, "Gold Coast Force", "#800000", "GCF", "GC Force")
+        away_team_3 = Team(2, 1, "Sala Time Futsal", "#39832E", "SAL", "Sala Time")
         competition = Competition(1, "2026", "F-League", False, True, True)
-        fixture = Fixture(1, competition, "Normal round", 1, home_team, 0, 0, away_team,
-                        datetime.now()+timedelta(minutes=10), "Court B", 0, 0, period_configuration)
-        fixture_queue = FixtureQueue([fixture])
+        fixture_1 = Fixture(1, competition, "Normal round", 1, home_team_1, 0, 0, away_team_1,
+                        datetime.now()+timedelta(seconds=10), "Court B", 0, 0, period_configuration)
+        fixture_2 = Fixture(2, competition, "Normal round", 1, home_team_1, 0, 0, away_team_1,
+                        datetime.now()+timedelta(seconds=10), "Court B", 0, 0, period_configuration)
+        fixture_3 = Fixture(3, competition, "Normal round", 1, home_team_2, 0, 0, away_team_2,
+                        datetime.now()+timedelta(seconds=10), "Court B", 0, 0, period_configuration)
+        fixture_4 = Fixture(4, competition, "Normal round", 1, home_team_3, 0, 0, away_team_3,
+                        datetime.now()+timedelta(seconds=10), "Court B", 0, 0, period_configuration)
+        fixture_queue = FixtureQueue([fixture_1, fixture_2, fixture_3, fixture_4])
         return fixture_queue
 
 

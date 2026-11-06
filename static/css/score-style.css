@@ -2,16 +2,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: "bahnschrift", sans-serif;
-    font-weight: 600;
+    font-family: impact;
+    /*font-weight: 600;
     font-stretch: 75%;
-    font-style: normal;
+    font-style: normal;*/
     font-size: 65vh;
     /*font-weight: 500;*/
     color: white;
-    text-transform: uppercase;
+    /*text-transform: uppercase;
     text-align: center;
-    line-height: 1;
+    line-height: 1;*/
 }
 
 
